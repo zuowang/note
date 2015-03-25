@@ -1,0 +1,8 @@
+mkdir note
+cd note
+git init
+git remote add origin https://zuowang@github.com/zuowang/note.git
+git fetch
+git rebase origin/master
+vi this-file
+git push -u origin master
