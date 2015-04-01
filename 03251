@@ -1,0 +1,8 @@
+list all packages
+dpkg -l|grep gcc
+list files for a package
+dpkg -L gcc-4.8
+
+
+
+

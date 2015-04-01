@@ -1,0 +1,12 @@
+*Add the toolchain/test PPA*
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install g++-4.8
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+ 
+*If you ever want to update symlinks for a future version:*
+sudo rm /usr/bin/g++
+sudo ln -s /usr/bin/g++-4.XXX /usr/bin/g++
+ 
+*Check version number*
+g++ --version 

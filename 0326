@@ -1,0 +1,14 @@
+use  /home/impala/Impala/fe/src/main/java
+
+jdb -attach 30003
+
+
+insert_staging_dir = \
+      "test-warehouse/functional.db/insert_overwrite_nopart/_impala_insert_staging"
+    self.hdfs_client.delete_file_dir(insert_staging_dir, recursive=True)
+    self.client.execute("""INSERT OVERWRITE
+functional.insert_overwrite_nopart SELECT int_col FROM functional.tinyinttable""")
+    ls = self.hdfs_client.list_dir(insert_staging_dir)
+    assert len(ls['FileStatuses']['FileStatus']) == 0
+
+
