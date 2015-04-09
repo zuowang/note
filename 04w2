@@ -1,0 +1,73 @@
+select count(*) from alltypes_parquet where tinyint_col = 3 and smallint_col = 4 and int_col in (5,6,8) and (bigint_col <= 11 or bigint_col in (15,16,17)) or float_col > 5.0 and double_col <= 60.0;
+
+Usage: update-alternatives [<option> ...] <command>
+
+Commands:
+  --install <link> <name> <path> <priority>
+    [--slave <link> <name> <path>] ...
+                           add a group of alternatives to the system.
+  --remove <name> <path>   remove <path> from the <name> group alternative.
+  --remove-all <name>      remove <name> group from the alternatives system.
+  --auto <name>            switch the master link <name> to automatic mode.
+  --display <name>         display information about the <name> group.
+  --query <name>           machine parseable version of --display <name>.
+  --list <name>            display all targets of the <name> group.
+  --get-selections         list master alternative names and their status.
+  --set-selections         read alternative status from standard input.
+  --config <name>          show alternatives for the <name> group and ask the
+                           user to select which one to use.
+  --set <name> <path>      set <path> as alternative for <name>.
+  --all                    call --config on all alternatives.
+
+<link> is the symlink pointing to /etc/alternatives/<name>.
+  (e.g. /usr/bin/pager)
+<name> is the master name for this link group.
+  (e.g. pager)
+<path> is the location of one of the alternative target files.
+  (e.g. /usr/bin/less)
+<priority> is an integer; options with higher numbers have higher priority in
+  automatic mode.
+
+Options:
+  --altdir <directory>     change the alternatives directory.
+  --admindir <directory>   change the administrative directory.
+  --log <file>             change the log file.
+  --force                  allow replacing files with alternative links.
+  --skip-auto              skip prompt for alternatives correctly configured
+                           in automatic mode (relevant for --config only)
+  --verbose                verbose operation, more output.
+  --quiet                  quiet operation, minimal output.
+  --help                   show this help message.
+  --version                show the version.
+
+bin/impala-shell.sh -d functional -q "select count(*) from alltypes_parquet where tinyint_col = 3 and smallint_col = 4 and int_col in (5,6,8) and (bigint_col <= 11 or bigint_col in (15,16,17)) or float_col > 5.0 and double_col <= 60.0;"
+
+
+b hdfs-parquet-scanner.cc:855
+
+print string length unlimit:
+set print element 0
+
+"OrPredicate( type=BOOLEAN children=[AndPredicate( type=BOOLEAN children=[AndPredicate( type=BOOLEAN children=[AndPredicate( type=BOOLEAN children=[ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala9Operators24Eq_TinyIntVal_TinyIntValEPN10impala_udf15FunctionContextERKNS1_10TinyIntValES6_ type=BOOLEAN children=[SlotRef(slot_id=0 tuple_idx=0 slot_offset=1 tuple_is_nullable=0 null_indicator=(offset=0 mask=1) type=TINYINT) Literal(value=\003 type=TINYINT)]) ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala9Operators26Eq_SmallIntVal_SmallIntValEPN10impala_udf15FunctionContextERKNS1_11SmallIntValES6_ type=BOOLEAN children=[SlotRef(slot_id=1 tuple_idx=0 slot_offset=2 tuple_is_nullable=0 null_indicator=(offset=0 mask=2) type=SMALLINT) Literal(value=4 type=SMALLINT)])]) ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala11InPredicate11InSetLookupEPN10impala_udf15FunctionContextERKNS1_6IntValEiPS5_ type=BOOLEAN children=[SlotRef(slot_id=2 tuple_idx=0 slot_offset=4 tuple_is_nullable=0 null_indicator=(offset=0 mask=4) type=INT) Literal(value=5 type=INT) Literal(value=6 type=INT) Literal(value=8 type=INT)])]) OrPredicate( type=BOOLEAN children=[ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala9Operators22Le_BigIntVal_BigIntValEPN10impala_udf15FunctionContextERKNS1_9BigIntValES6_ type=BOOLEAN children=[SlotRef(slot_id=3 tuple_idx=0 slot_offset=16 tuple_is_nullable=0 null_indicator=(offset=0 mask=10) type=BIGINT) Literal(value=11 type=BIGINT)]) ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala11InPredicate11InSetLookupEPN10impala_udf15FunctionContextERKNS1_9BigIntValEiPS5_ type=BOOLEAN children=[SlotRef(slot_id=3 tuple_idx=0 slot_offset=16 tuple_is_nullable=0 null_indicator=(offset=0 mask=10) type=BIGINT) Literal(value=15 type=BIGINT) Literal(value=16 type=BIGINT) Literal(value=17 type=BIGINT)])])]) AndPredicate( type=BOOLEAN children=[ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala9Operators20Gt_FloatVal_FloatValEPN10impala_udf15FunctionContextERKNS1_8FloatValES6_ type=BOOLEAN children=[SlotRef(slot_id=4 tuple_idx=0 slot_offset=8 tuple_is_nullable=0 null_indicator=(offset=0 mask=8) type=FLOAT) Literal(value=5 type=FLOAT)]) ScalarFnCall(udf_type=BUILTIN location= symbol_name=_ZN6impala9Operators22Le_DoubleVal_DoubleValEPN10impala_udf15FunctionContextERKNS1_9DoubleValES6_ type=BOOLEAN children=[SlotRef(slot_id=5 tuple_idx=0 slot_offset=24 tuple_is_nullable=0 null_indicator=(offset=0 mask=20) type=DOUBLE) Literal(value=60 type=DOUBLE)])])])"
+
+
+
+
+git format-patch -2
+git format-patch -s SHA1ID
+git format-patch -n SHA1ID
+git format patch -M master  :all commit ahead of master
+git apply --stat new.patch
+git apply --check new.patch
+git am < new.patch
+
+git rm --cached be/src/benchmarks/bitmap-benchmark.cc
+
+
+C++ compiler error
+"Bitmap" was not declared in this scope
+check if 2 files has the same ifndef MACRO
+#ifndef IMPALA_UTIL_AVX_BITMAP_H
+#define IMPALA_UTIL_AVX_BITMAP_H
+
+

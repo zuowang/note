@@ -1,0 +1,7 @@
+git log|grep -5 zuowang
+git show ece4a53
+
+regenerate testdata:
+./buildall.sh -noclean -testdata
+
+https://github.com/zuowang/fixlen-encoding
