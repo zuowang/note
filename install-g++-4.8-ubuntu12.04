@@ -1,5 +1,8 @@
 *Add the toolchain/test PPA*
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo su
+export https_proxy=https://child-prc.intel.com:913
+add-apt-repository ppa:ubuntu-toolchain-r/test
+
 sudo apt-get update
 sudo apt-get install g++-4.8
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50

@@ -1,0 +1,311 @@
+docker pull docker-dev:1.6.2
+docker run --privileged --rm -ti docker-dev:1.6.2 /bin/bash
+root@31ed86e9ddcf:/go/src/github.com/docker/docker# go version
+root@5f8630b873fe:/go/src/github.com/docker/docker# hack/make.sh binary
+
+root@5f8630b873fe:/go/src/github.com/docker/docker#  ls bundles/1.5.0-dev/binary/
+
+root@5f8630b873fe:/go/src/github.com/docker/docker#  cp bundles/1.5.0-dev/binary/docker /usr/bin
+
+root@5f8630b873fe:/go/src/github.com/docker/docker# docker --version
+
+Start a docker daemon running inside your container.
+root@5f8630b873fe:/go/src/github.com/docker/docker#  docker -dD
+
+all above from https://docs.docker.com/project/set-up-dev-env/
+
+Docker - setting the default size of images with device mapper storage driver
+
+Been playing around with docker (http://docker.io) for a while now to see if it can help create a one script setup for setting up the build environment for the avr8 toolchain. One pesky problem when using the device mapper storage driver (the default on RHEL) is that the created images/containers are small - only 10G. That isn’t going to cut it for building the GNU toolchain - the gcc repo itself takes up 2.6G on my machine. Of course, mapping directories on the host would help, but I figured the more self contained the whole thing is, the better.
+
+Googling for a solution only turned up this page[http://jpetazzo.github.io/2014/01/29/docker-device-mapper-resize], but that isn’t really practical without the ability to commit the enlarged container. So I decided to check out the source (oh the joy of open source software :)) from github[https://github.com/dotcloud/docker.git] to see how to get around this. Turns out it is already documented - the device mapper driver’s README.md[https://github.com/dotcloud/docker/blob/master/daemon/graphdriver/devmapper/README.md] says passing dm.basesize= should do the trick.
+
+Had to delete the storage pool to get it to work though - I guess that’s because all images are snapshotted off a base device that is created only once. And the –storage-opts option for the docker daemon is not supported on older versions of docker (<= 0.7 IIRC) - all the more reason to upgrade to 1.0.
+
+Tue Jun 24, 2014
+
+docker run --privileged --rm -ti docker-dev:1.6.2 /bin/bash
+hack/make.sh binary
+
+DOCKER_STORAGE_OPTIONS=" --storage-opt dm.basesize=100G --storage-opt dm.loopdatasize=600G --storage-opt dm.loopmetadatasize=10G "
+
+https://github.com/docker/docker/blob/master/daemon/graphdriver/devmapper/README.md
+
+
+git remote add gerrit ssh://zuowang@gerrit.cloudera.org:29418/Impala
+
+
+
+vi /usr/local/bin/socks-gateway
+
+#!/bin/bash
+
+
+
+case $1 in
+
+    *.intel.com|192.168.*|127.0.*|localhost|10.*)
+
+        METHOD="-X connect"
+
+    ;;
+
+    *)
+
+        #METHOD="-X 5 -x proxy-us.intel.com:1080"
+
+        #METHOD="-X 5 -x proxy-mu.intel.com:1080"
+
+        METHOD="-X 5 -x child-prc.intel.com:1080"
+
+    ;;
+
+esac
+
+
+
+/bin/nc.openbsd $METHOD $*
+
+
+
+
+
+
+
+vi /etc/ssh/ssh_config
+
+Host gerrit.cloudera.org
+
+        ProxyCommand /usr/local/bin/socks-gateway %h %p
+
+
+
+sudo vi /etc/apt/apt.conf
+
+Acquire::http::proxy "http://child-prc.intel.com:913/";
+
+Acquire::https::proxy "http://child-prc.intel.com:913/";
+
+Acquire::ftp::proxy "http://child-prc.intel.com:913/";
+
+Acquire::socks::proxy "socks://child-prc.intel.com:1080/";
+
+
+
+sudo apt-get install netcat-openbsd
+
+
+
+
+
+
+
+How to Generate an SSH Key 
+
+   
+
+
+
+
+
+1.From the Terminal or Git Bash, run ssh-keygen
+
+2.Confirm the default path .ssh/id_rsa
+
+3.Enter a passphrase (recommended) or leave it blank.
+
+Remember this passphrase, as you will need it to unlock the
+
+key whenever you use it.
+
+4.Open ~/.ssh/id_rsa.pub and copy & paste the contents into
+
+the box below, then click on "Add".
+
+Note that id_rsa.pub is your public key and can be shared,
+
+while id_rsa is your private key and should be kept secret.
+
+ 
+
+git fetch gerrit
+
+
+std::unique_lock<> and condition variables
+
+
+
+One place where the flexibility of std::unique_lock<> is used is with std::condition_variable. std::condition_variable provides an implementation of a condition variable, which allows a thread to wait until it has been notified that a certain condition is true. When waiting you must pass in a std::unique_lock<> instance that owns a lock on the mutex protecting the data related to the condition. The condition variable uses the flexibility of std::unique_lock<> to unlock the mutex whilst it is waiting, and then lock it again before returning to the caller. This enables other threads to access the protected data whilst the thread is blocked. I will expand upon this in a later part of the series.
+
+  for (int i = 0; i < disk_queues_.size(); ++i) {
+
+    if (disk_queues_[i] == NULL) continue;
+
+    {
+
+      // This lock is necessary to properly use the condition var to notify
+
+      // the disk worker threads.  The readers also grab this lock so updates
+
+      // to shut_down_ are protected.
+
+      unique_lock<mutex> disk_lock(disk_queues_[i]->lock);
+
+//make sure disk_queues_[i]->lock is unlock, while work_available.wait(l); it will be unlocked. so all the threads can catch the update shut_down=false
+    }
+
+    disk_queues_[i]->work_available.notify_all();
+
+  }
+
+  disk_thread_group_.JoinAll();
+
+
+
+git remote add gerrit ssh://zuowang@gerrit.cloudera.org:29418/Impala
+
+vi .git/gitconfig
+
+
+
+vi /usr/local/bin/socks-gateway
+
+#!/bin/bash
+
+
+
+case $1 in
+
+    *.intel.com|192.168.*|127.0.*|localhost|10.*)
+
+        METHOD="-X connect"
+
+    ;;
+
+    *)
+
+        #METHOD="-X 5 -x proxy-us.intel.com:1080"
+
+        #METHOD="-X 5 -x proxy-mu.intel.com:1080"
+
+        METHOD="-X 5 -x child-prc.intel.com:1080"
+
+    ;;
+
+esac
+
+
+
+/bin/nc.openbsd $METHOD $*
+
+
+
+
+
+
+
+vi /etc/ssh/ssh_config
+
+Host gerrit.cloudera.org
+
+        ProxyCommand /usr/local/bin/socks-gateway %h %p
+
+
+
+sudo vi /etc/apt/apt.conf
+
+Acquire::http::proxy "http://child-prc.intel.com:913/";
+
+Acquire::https::proxy "http://child-prc.intel.com:913/";
+
+Acquire::ftp::proxy "http://child-prc.intel.com:913/";
+
+Acquire::socks::proxy "socks://child-prc.intel.com:1080/";
+
+
+
+sudo apt-get install netcat-openbsd
+
+
+
+
+
+
+
+How to Generate an SSH Key 
+
+   
+
+
+
+
+
+1.From the Terminal or Git Bash, run ssh-keygen
+
+2.Confirm the default path .ssh/id_rsa
+
+3.Enter a passphrase (recommended) or leave it blank.
+
+Remember this passphrase, as you will need it to unlock the
+
+key whenever you use it.
+
+4.Open ~/.ssh/id_rsa.pub and copy & paste the contents into
+
+the box below, then click on "Add".
+
+Note that id_rsa.pub is your public key and can be shared,
+
+while id_rsa is your private key and should be kept secret.
+
+ 
+
+git fetch gerrit
+
+
+
+save then load:
+
+sudo docker save busybox-1 > /home/save.tar
+
+docker load < /home/save.tar
+
+
+
+export then import:
+
+sudo docker export <CONTAINER ID> > /home/export.tar
+
+sudo cat intel_container2.tar | sudo docker import - intel_impala_image:copy
+
+
+
+$ docker run -i -t cloudera/impala-dev:complete /bin/bash
+
+
+
+
+
+docker start 8d1b197f9dfc
+
+Error response from daemon: Cannot start container 8d1b197f9dfc: Error getting container 8d1b197f9dfcf690d3f891fac87c14f47b07166b0a0e4b687b0692b7ba8d1265 from driver devicemapper: Error mounting '/dev/mapper/docker-8:129-39059459-8d1b197f9dfcf690d3f891fac87c14f47b07166b0a0e4b687b0692b7ba8d1265' on '/mnt/disk8/dockerfile/devicemapper/mnt/8d1b197f9dfcf690d3f891fac87c14f47b07166b0a0e4b687b0692b7ba8d1265': device or resource busy
+
+FATA[0000] Error: failed to start one or more containers 
+
+
+
+
+
+ umount /mnt/disk8/dockerfile/devicemapper/mnt/8d1b197f9dfcf690d3f891fac87c14f47b07166b0a0e4b687b0692b7ba8d1265
+
+ 
+
+ 
+
+ cat /var/tmp/intel_container2.tar | sudo docker import --change "ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" --change "WORKDIR /home/impala" --change "EXPOSE 22" --change "USER root" --change "CMD /start-daemons.sh"  - intel_impala_image:import2
+
+ 
+
+ 
+
+ 

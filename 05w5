@@ -1,0 +1,15 @@
+debug golang with gdb:
+https://golang.org/doc/gdb
+
+https://golang.org/doc/gdb#Introduction
+
+it's cool when I can't ssh to the container:
+sudo docker exec -it 9e69e2942b40 /bin/bash
+
+ENV http_proxy http://child-prc.intel.com:913
+ENV http_proxy https://child-prc.intel.com:913
+
+enable java debugger:
+export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,address=localhost:${JVM_DEBUG_PORT},server=y,suspend=${JVM_SUSPEND} ${JAVA_TOOL_OPTIONS}"
+
+http://preilly.me/2013/05/10/how-to-install-maven-on-centos/

@@ -1,0 +1,126 @@
+In CentOS 6.5
+service docker stop
+mkdir /data/docker  (new directory)
+vi /etc/sysconfig/docker
+add following line
+other_args=" -g /data/docker -p /var/run/docker.pid"
+then save the file and start docker again
+service docker start
+and will make repository file in /data/docker
+yum info device-mapper-libs
+yum install device-mapper-libs
+the following possible configs are located in /etc/wgetrc just uncomment and use...
+# You can set the default proxies for Wget to use for http, https, and ftp.
+# They will override the value in the environment.
+#https_proxy = http://proxy.yoyodyne.com:18023/
+#http_proxy = http://proxy.yoyodyne.com:18023/
+#ftp_proxy = http://proxy.yoyodyne.com:18023/
+
+# If you do not want to use proxy at all, set this to off.
+
+#use_proxy = on
+[root@TestNode1 ~]#sudo yum -y update docker-io
+No packages marked for update
+[root@TestNode1 ~]#sudo wget https://get.docker.com/builds/Linux/x86_64/docker-latest -O /usr/bin/docker		
+To extend Arun's answer above, for this to work in Centos 7 I had to remove the "export" commands. So edit
+/etc/sysconfig/docker
+And add:
+HTTP_PROXY="http://<proxy_host>:<proxy_port>"
+HTTPS_PROXY="https://<proxy_host>:<proxy_port>"
+http_proxy="${HTTP_PROXY}"
+https_proxy="${HTTPS_PROXY}"
+Then restart docker:
+sudo service docker restart
+HTTP_PROXT=http://child-prc.intel.com:913 docker pull sequenceiq/spark:1.2.1
+
+https://www.dropbox.com/s/i2x8j7wjife24kq/test-warehouse-cdh-SNAPSHOT.tar.gz?dl=0
+
+https://www.dropbox.com/s/u5amy7kc1zuq3sl/hive_impala_dump_cdh.txt?dl=0
+
+
+yum info device-mapper-libs
+
+
+
+the following possible configs are located in /etc/wgetrc just uncomment and use...
+
+
+
+# You can set the default proxies for Wget to use for http, https, and ftp.
+
+# They will override the value in the environment.
+
+#https_proxy = http://proxy.yoyodyne.com:18023/
+
+#http_proxy = http://proxy.yoyodyne.com:18023/
+
+#ftp_proxy = http://proxy.yoyodyne.com:18023/
+
+
+
+# If you do not want to use proxy at all, set this to off.
+
+#use_proxy = on
+
+
+
+
+
+
+
+[root@TestNode1 ~]#sudo yum -y update docker-io
+
+
+
+No packages marked for update
+
+
+
+[root@TestNode1 ~]#sudo wget https://get.docker.com/builds/Linux/x86_64/docker-latest -O /usr/bin/docker		
+
+	
+
+
+
+To extend Arun's answer above, for this to work in Centos 7 I had to remove the "export" commands. So edit
+
+
+
+/etc/sysconfig/docker
+
+
+
+And add:
+
+
+
+HTTP_PROXY="http://<proxy_host>:<proxy_port>"
+
+HTTPS_PROXY="https://<proxy_host>:<proxy_port>"
+
+http_proxy="${HTTP_PROXY}"
+
+https_proxy="${HTTPS_PROXY}"
+
+
+
+Then restart docker:
+
+
+
+sudo service docker restart
+
+
+
+
+
+HTTP_PROXT=http://child-prc.intel.com:913 docker pull sequenceiq/spark:1.2.1
+
+docker save and docker load will preserve image metadata (CMD, ENTRYPOINT, etc) and all layers.
+
+docker export and docker import don't preserve metadata. This is by design and it's not being changed.
+
+docker import will be extended with a --change option to allow CMD, ENTRYPOINT, ENV and many other options to be set. Please take a look at #7239 for the plan concerning this, especially #7239 (comment)
+
+Squashing layers will also be implemented, so that will be another way to address the problem of flattening images while keeping metadata.
+https://github.com/docker/docker/issues/8334

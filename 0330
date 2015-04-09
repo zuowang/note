@@ -19,6 +19,7 @@ cd tools/build/
 export PATH=/home/impala/boost_install/bin:$PATH
 cd ../../
 b2 --build-dir=/home/impala/boost_build --prefix=/home/impala/boost_install address-model=64 toolset=intel install
+b2 --build-dir=/home/impala/boost_build --prefix=/home/impala/boost_install address-model=64 toolset=intel threading=single|multi --layout=tagged install
 
 set(BOOST_ROOT "/home/impala/boost_1_57_0")
 set(BOOST_INCLUDEDIR "/home/impala/boost_install/include")
@@ -28,3 +29,36 @@ set(BOOST_LIBRARYDIR "/home/impala/boost_install/lib")
 find_package(Boost COMPONENTS thread regex-mt system-mt filesystem-mt REQUIRED)
 #include_directories(${Boost_INCLUDE_DIR})
 #link_directories(${Boost_LIBRARY_DIR})
+
+
+
+boost 1.46.1
+refer to http://www.boost.org/doc/libs/1_46_1/more/getting_started/unix-variants.html#easy-build-and-install
+source /opt/intel/bin/compilervars.sh intel64
+cd tools/build/
+./bootstrap.sh 
+./bjam install --prefix=/home/impala/boost_build
+source /opt/intel/bin/compilervars.sh intel64
+./bootstrap.sh --prefix=/home/impala/boost_install --with-toolset=intel-linux
+export LANG=C
+./bjam --build-dir=/home/impala/boost_build --prefix=/home/impala/boost_install --layout=tagged address-model=64 toolset=intel install
+
+
+vi tools/build/v2/tools/intel-linux.jam
+change line:
+flags intel-linux.compile OPTIONS <optimization>speed : "-O3 -std=c++0x -ip" ; # no specific space optimization flag in icc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
