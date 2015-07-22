@@ -71,6 +71,7 @@ check if 2 files has the same ifndef MACRO
 #ifndef IMPALA_UTIL_AVX_BITMAP_H
 #define IMPALA_UTIL_AVX_BITMAP_H
 
+<<<<<<< HEAD
 Op Set:               Function     Rate (iters/ms)          Comparison
 ----------------------------------------------------------------------
                         Bitmap             0.03735                  1X
@@ -249,4 +250,6 @@ run back-end-test should not start impala cluster
 
 
 
+=======
+>>>>>>> d01676736f74b2b2a4f0ce20c3215f2c39367528
 

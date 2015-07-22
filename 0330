@@ -20,6 +20,7 @@ export PATH=/home/impala/boost_install/bin:$PATH
 cd ../../
 b2 --build-dir=/home/impala/boost_build --prefix=/home/impala/boost_install address-model=64 toolset=intel install
 b2 --build-dir=/home/impala/boost_build --prefix=/home/impala/boost_install address-model=64 toolset=intel threading=single|multi --layout=tagged install
+b2 --build-dir=/home/impala/boost_build --prefix=/home/impala/boost_install address-model=64 toolset=intel threading=single|multi install
 
 set(BOOST_ROOT "/home/impala/boost_1_57_0")
 set(BOOST_INCLUDEDIR "/home/impala/boost_install/include")
