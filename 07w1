@@ -1,0 +1,17 @@
+amplxe-cl -collect concurrency -knob enable-user-sync=true -knob enable-user-tasks=true -target-pid 209884
+
+http://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file
+
+record desktop with:
+gtk-recordMyDesktop
+
+play vedio with:
+yum --enablerepo=remi-test install vlc
+
+
+IntelliJ goto class by name:
+Ctrl+N
+
+ssh -L 7180:192.168.150.104:7180 root@nodejump.sh.intel.com
+
+https://github.com/tmux/tmux/releases/download/2.0/tmux-2.0.tar.gz

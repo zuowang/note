@@ -1,0 +1,433 @@
+I have only built on ubuntu, but I can send you the packages that you need. It should work on centos 6.5.
+
+
+
+1.	Build Essential (gcc, ...)
+
+2.	Boost (libboost<>-dev package for Debian family, boost-devel for Fedora family)
+
+3.	Boost threads (libboost-thread-dev)
+
+4.	Boost regex (libboost-regex-dev)
+
+5.	Bzip2 library
+
+6.	Zlib library (this may already be installed)
+
+7.	Python dev (python<>-dev)
+
+8.	Maven (maven3)
+
+9.	cmake
+
+10.	git
+
+11.	ant (Used for hadoop-lzo)
+
+12.	svn (Used in the LLVM install process)
+
+
+
+On 10.04:
+
+sudo apt-get install build-essential ant libboost-dev libboost-thread-dev libboost-test-dev libboost-program-options-dev libboost-regex-dev libboost-system-dev libboost-filesystem-dev zlib1g-dev libbz2-dev python-dev automake libtool flex bison cmake pkg-config git-core libssl-dev svn libevent-dev libsasl2-dev libldap2-dev libdb4.8-dev
+
+On 11.04:
+
+sudo apt-get install build-essential ant libboost-dev libboost-thread-dev libboost-test-dev libboost-program-options-dev libboost-regex-dev libboost-system-dev libboost-filesystem-dev zlib1g-dev libbz2-dev python-dev automake libtool flex bison cmake pkg-config git libssl-dev subversion libevent-dev libsasl2-dev libldap2-dev libdb4.8-dev
+
+On 12.04:
+
+sudo apt-get install build-essential ant libboost-dev libboost-thread-dev libboost-test-dev libboost-program-options-dev libboost-regex-dev libboost-system-dev libboost-filesystem-dev zlib1g-dev libbz2-dev python-dev automake libtool flex bison cmake pkg-config git libssl-dev subversion libevent1-dev libsasl2-dev libldap2-dev libdb4.8-dev
+
+ 
+
+on 14.04 (requires a special patched version of boost):
+
+sudo apt-get install build-essential ant zlib1g-dev libbz2-dev python-dev automake libtool flex bison cmake pkg-config git libssl-dev subversion libevent1-dev libsasl2-dev libldap2-dev libdb4.8-dev
+
+ 
+
+# Download and install a patched version of boost. Specific patch is:
+
+# http://github.mtv.cloudera.com/Kitchen/toolchain/tree/master/fpm/boost
+
+wget http://mirror.infra.cloudera.com/toolchain/deb/pool/contrib/b/boost-pic-1.55.0/boost-pic-1.55.0_1.55.0-2_amd64.deb
+
+yes | dpkg -i ./boost-pic-1.55.0_1.55.0-2_amd64.deb
+
+# You will probably also want to put this in /etc/environment or ~/.bashrc:
+
+export BOOST_ROOT=/opt/toolchain/boost-pic-1.55.0/
+
+ 
+
+On Centos6:
+
+yum groupinstall "Development Tools"
+
+yum install ant boost-test boost-program-options libevent-devel automake libtool flex bison gcc-c++ openssl-devel make cmake doxygen.x86_64 glib-devel boost-devel python-devel bzip2-devel svn libevent-devel krb5-workstation openldap-devel db4-devel
+
+
+
+
+
+Install Maven3
+
+sudo apt-get install python-software-properties
+
+sudo add-apt-repository ppa:natecarlson/maven3
+
+sudo apt-get update && sudo apt-get install maven3
+
+sudo ln -s /usr/bin/mvn3 /usr/bin/mvn
+
+
+
+Python packagesOn Ubuntu:
+
+sudo apt-get install python-setuptools python-pip
+
+On Centos6:
+
+sudo yum install python-setuptools python-pip
+
+
+
+Ubuntu:
+
+sudo pip install allpairs pytest pytest-xdist paramiko texttable prettytable sqlparse psutil==0.7.1 pywebhdfs gitpython jenkinsapi
+
+On Centos6:
+
+pip-python install allpairs pytest pytest-xdist paramiko texttable prettytable sqlparse psutil==0.7.1 pywebhdfs gitpython jenkinsapi
+
+
+
+JVM
+
+Ubuntu comes with OpenJDK which is not compatible with Hadoop. Get the Sun JVM instead. Do not uninstall OpenJDK, instead make sure sun's java comes first in your path.
+
+Ubuntu 11.04
+
+sudo apt-get purge openjdk* # not strictly necessary, but means you can't run OpenJDK by mistake
+
+sudo apt-add-repository ppa:flexiondotorg/java # You can ignore the error about the signing_key_fingerprint
+
+sudo apt-get update
+
+sudo apt-get install sun-java6-jdk
+
+If apt-get install gives you an error, try
+
+sudo apt-get -f install
+
+Ubuntu 12.04
+
+Installation on Java6 is broken as of March 2014 (oracle now requires an account to download the .bin files used by the script). An alternative is to install sun-java7:
+
+Java 7 using apt-get:
+
+sudo add-apt-repository ppa:webupd8team/java
+
+sudo apt-get update
+
+sudo apt-get install oracle-jdk7-installer
+
+Java 7 from tarball:
+
+cd ~/Downloads/
+
+# *MANUALLY*  jdk-7u51-linux-x64.tar.gz from http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+
+# NOTE: you have to agree to their terms to download it, difficult to write scripts for this
+
+# NOTE: this is tarball, despite the name
+
+tar xzf jdk-7u51-linux-x64.gz
+
+Once downloaded, proceed to install java7. This is not straightforward and depends on your current system setup. In short, follow symlinks starting with `which java` until you reach the jdk directory in /usr/lib/jvm. Rename the current directory and copy jdk1.7.0_51 and rename it to fix the `which java` symlink. This post has more information:  http://askubuntu.com/questions/56104/how-can-i-install-sun-oracles-proprietary-java-jdk-6-7-8-or-jre
+
+Centos6
+
+We have JDK's on http://filer.sf.cloudera.com/shares/export/images/jdks/
+
+Installing the rpm seems not to put jps in the default path (it's in /usr/java/bin/jps). This is needed by the build so you'll need to add it to the path (or create a symlink in /usr/bin).
+
+Confirm correct JVM installation
+
+You can confirm with
+
+you@ubuntu:~$ java -version
+
+java version "1.6.0_26"
+
+Java(TM) SE Runtime Environment (build 1.6.0_26-b03)
+
+Java HotSpot(TM) 64-Bit Server VM (build 20.1-b02, mixed mode)
+
+Ubuntu 12.04
+
+If your java version shows the OpenJDK when you run the check command above, run
+
+sudo update-alternatives --config java
+
+
+
+
+
+sasl
+
+sudo  apt-get install libsasl2-dev
+
+(I don't know the exact package name on centos, but you probably don't need kerberos anyways)
+
+
+
+Thrift on ubuntu 12.04:
+
+1.	Ubuntu 12.04 includes libevent-dev 2 by default. Thrift v0.9 + Impala does not currently build properly with libevent2 so this package needs to be replaced: apt-get install libevent1-dev (which is also included in the command for 12.04 packages above).
+
+2.	After upgrading Ubuntu distros you may need to repeat these steps to build/install Thrift. If Thrift isn't rebuilt, Impala builds may fail due to "strange" linking errors related to Thrift + Boost. Example error:
+
+`.text._ZN5boost16exception_detail19error_info_injectorINS_16bad_lexical_castEED2Ev'
+
+Thrift installs its libraries to /usr/local/lib by default. A fresh Ubuntu won't look there for linking, so make sure you run sudo ldconfig to pick up the thrift libraries before building Impala.
+
+
+
+llvm
+
+If you have a previous version installed, cd into the folder with the previous version and run (not sure if you can run this from the new src folder, you probably can).
+
+sudo make uninstall
+
+
+
+We use llvm 3.3 http://llvm.org/releases/download.html#3.3
+
+extract the source to a folder (e.g. llvm)
+
+cd llvm* # or whatever your folder is called
+
+cd tools
+
+svn co http://llvm.org/svn/llvm-project/cfe/tags/RELEASE_33/final/ clang
+
+cd ../projects
+
+svn co http://llvm.org/svn/llvm-project/compiler-rt/tags/RELEASE_33/final/ compiler-rt
+
+cd ..
+
+./configure --with-pic
+
+make -j4 REQUIRES_RTTI=1
+
+sudo make install
+
+
+
+Confirm that you can run "llvm-config --version" and "clang --version". Both should report 3.3
+
+
+
+Postgres
+
+By default, Impala's buildall.sh script generates a hive-site.xml that is configured to access a local Postgres installation with username hiveuser and password password. This section describes how to install and configure Postgres.
+
+Installing the packages
+
+Ubuntu: sudo apt-get install postgresql
+
+Centos 6.2: yum install postgresql postgresql-server
+
+Configuring Postgres to accept TCP connections
+
+Postgres is very conservative by default with respect to the kind of connections you can make. Since the Hive client will connect to the local postmaster daemon over TCP, we need to make Postgres more permissive by editing a configuration file.
+
+On Ubuntu, this file is in /etc/postgresql/*/main/pg_hba.conf, on CentOS it's in /var/lib/pgsql/data/pg_hba.conf. Open pg_hba.conf as root. At the bottom of the file you'll see four uncommented lines that look similar to this:
+
+# Database administrative login by UNIX sockets
+
+local   all         all                          ident
+
+ 
+
+# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
+
+ 
+
+# "local" is for Unix domain socket connections only
+
+local   all         all                               ident
+
+# IPv4 local connections:
+
+host    all         all         127.0.0.1/32          md5
+
+# IPv6 local connections:
+
+host    all         all         ::1/128               md5
+
+Where you see ident in the final column on any row, replace it with trust (md5 should work as well). This changes the authentication scheme to either no password required (trust) or simple digest authentication (md5). In postgres version 9.1 where you see peer, change it to trust.
+
+For CentOS, if /var/lib/pgsql/data/pg_hba.conf is absent, you need to initialize the postgres database. /sbin/service postgresql initdb.
+
+Restart Postgres by Ubuntu: /etc/init.d/postgresql restart or CentOS: /sbin/service postgresql restart.
+
+Ubuntu 12.04/Postgres 9.1
+
+Icon
+
+If using Postgres 9.1 (which is the default version with Ubuntu 12.04) a compatibility flag needs to be enabled for the Hive Metastore Client to work. Edit/etc/postgresql/9.1/main/postgresql.conf and set the flag standard_conforming_strings = off. Once this is done restart the postgres server.
+
+Creating the Hive metastore user
+
+Run the following command to get a Postgres shell:
+
+sudo -u postgres psql postgres
+
+Execute the following two commands to create a user for Impala / Hive that can create databases (as required by buildall.sh).
+
+CREATE ROLE hiveuser LOGIN PASSWORD 'password';
+
+ALTER ROLE hiveuser WITH CREATEDB;
+
+Exit out of the shell. That's it for Postgres configuration. buildall.sh will create the databases and load the schema from bin/hive-schema-0.9.0.postgres.sql.
+
+
+
+LZO compression support.
+
+LZO compression is licensed under GPL and so Cloudera does not ship it. Install the lzo library and lzop compression program:
+
+sudo apt-get install liblzo2-dev lzop
+
+Ubuntu 12.04
+
+Icon
+
+On Ubuntu 12.04 it appears the liblzo2-dev libraries are placed in a different location. You may need to create a symlink to the libraries under /usr/lib:
+
+sudo ln -s /usr/lib/x86_64-linux-gnu/liblzo2.a /usr/lib/liblzo2.a
+
+sudo ln -s /usr/lib/x86_64-linux-gnu/liblzo2.so /usr/lib/liblzo2.so
+
+/etc/hosts
+
+In Ubuntu 11.04 and 12.04, the default /etc/hosts is not compatible with hbase. The default file looks like
+
+127.0.0.1 localhost
+
+127.0.1.1 < your machine >
+
+...
+
+Change this to
+
+127.0.0.1 localhost
+
+127.0.0.1 < your machine >
+
+...
+
+HDFS
+
+You must enable short-circuit reads for hdfs to startup. To do this, you'll need to make a folder in /var/lib. Make sure that it has the right permissions, chown it the username you run the mini-dfs-cluster under.
+
+sudo mkdir /var/lib/hadoop-hdfs
+
+sudo chown <username> /var/lib/hadoop-hdfs
+
+HBase
+
+HBase multi-node config requires password-less ssh to all the host (which is just localhost).
+
+First, install ssh
+
+sudo apt-get install openssh-server openssh-client
+
+Then, setup password-less ssh to localhost
+
+ssh-keygen -t dsa
+
+Do not type in any passkey. Just press enter.
+
+cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+
+An existing HBase bug would cause "class not found" exception when running hbase if $HADOOP_HOME (0.23.0) is set. So, do not source impala-config.sh in ~/.bashrc
+
+To test the password-less setup and add localhost to the list of known hosts do:
+
+ssh localhost
+
+
+
+
+
+Install Lzo
+
+
+
+cd ~
+
+git clone https://github.com/cloudera/hadoop-lzo.git
+
+git clone https://github.com/cloudera/impala-lzo.git
+
+
+
+You should clone these to your home directory, if not, you will need to set the environment variables HADOOP_LZO and IMPALA_LZO to point at them.
+
+You can follow the instructions below after fetching the Impala repo and before running buildall.sh.
+
+Simplified building instructions for hadoop-lzo:
+
+cd hadoop-lzo
+
+ant package
+
+If hadoop-lzo build fails with the following error: "[javah] Error: Class org.apache.hadoop.conf.Configuration could not be found", make sure the build.xml file in $HOME/hadoop-lzo has the following code block:
+
+Code Block
+
+<javah classpath="${build.classes}"
+
+       destdir="${build.native}/src/com/hadoop/compression/lzo"
+
+       force="yes"
+
+       verbose="yes">
+
+  <class name="com.hadoop.compression.lzo.LzoCompressor" />
+
+  <class name="com.hadoop.compression.lzo.LzoDecompressor" />
+
+  <classpath refid="classpath"/>
+
+</javah>
+
+The important part is the potentially missing classpath reference.
+
+Note: building Impala-lzo presumes you've run "source bin/impala-config.sh" 
+
+ 
+
+Icon
+
+You need to have your JAVA_HOME set before running ant
+
+
+
+
+
+After this you should be able to build Impala.
+
+First build the third party and then run ./buildall
+
+
+
+
+
+

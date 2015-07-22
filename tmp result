@@ -1,0 +1,191 @@
+
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+Add:                  Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           2.622e+04                  1X
+                  int128_Boost                3485             0.1329X
+                     int96_CPP                1333            0.05085X
+                         int64           4.238e+04              1.616X
+                 int128_Base1B           1.194e+04             0.4555X
+                       doubles           4.149e+04              1.582X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.706e+04                  1X
+                  int128_Boost                5212             0.3055X
+                     int96_CPP                1263            0.07404X
+                         int64           4.298e+04               2.52X
+                       doubles           2.828e+04              1.658X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2102                  1X
+                  int128_Boost                1282             0.6097X
+                     int96_CPP                 585             0.2782X
+                         int64                3031              1.442X
+                        double                7040              3.349X
+
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+----------------------------------------------------------------------
+                    int128_CPP           2.592e+04                  1X
+                  int128_Boost                3445             0.1329X
+                     int96_CPP                1321            0.05096X
+                         int64           4.208e+04              1.623X
+                 int128_Base1B           1.189e+04             0.4588X
+                       doubles           4.123e+04               1.59X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.694e+04                  1X
+                  int128_Boost                5176             0.3056X
+                     int96_CPP                1250            0.07377X
+                         int64           4.261e+04              2.516X
+                       doubles           2.812e+04               1.66X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2089                  1X
+                  int128_Boost                1279             0.6121X
+                     int96_CPP               579.3             0.2773X
+                         int64                3002              1.437X
+                        double                7008              3.355X
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+Add:                  Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           2.518e+04                  1X
+                  int128_Boost           1.115e+04             0.4429X
+                     int96_CPP                1608            0.06388X
+                         int64           4.334e+04              1.722X
+                 int128_Base1B           1.725e+04             0.6854X
+                       doubles           3.503e+04              1.391X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.837e+04                  1X
+                  int128_Boost           1.248e+04             0.6797X
+                     int96_CPP                1519            0.08268X
+                         int64           4.254e+04              2.316X
+                       doubles           2.886e+04              1.571X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2025                  1X
+                  int128_Boost                1648             0.8142X
+                     int96_CPP               626.4             0.3094X
+                         int64                3002              1.483X
+                        double                7004               3.46X
+
+
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+Add:                  Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           2.514e+04                  1X
+                  int128_Boost           1.109e+04             0.4412X
+                     int96_CPP                1607            0.06394X
+                         int64           4.322e+04              1.719X
+                 int128_Base1B           1.718e+04             0.6835X
+                       doubles           4.285e+04              1.705X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.845e+04                  1X
+                  int128_Boost           1.239e+04             0.6716X
+                     int96_CPP                1507            0.08168X
+                         int64           4.237e+04              2.297X
+                       doubles           2.867e+04              1.554X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2031                  1X
+                  int128_Boost                1700             0.8371X
+                     int96_CPP               624.2             0.3073X
+                         int64                2982              1.468X
+                        double                6999              3.446X
+
+-ipo
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+Add:                  Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           2.514e+04                  1X
+                  int128_Boost           1.109e+04             0.4412X
+                     int96_CPP                1607            0.06394X
+                         int64           4.322e+04              1.719X
+                 int128_Base1B           1.718e+04             0.6835X
+                       doubles           4.285e+04              1.705X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.845e+04                  1X
+                  int128_Boost           1.239e+04             0.6716X
+                     int96_CPP                1507            0.08168X
+                         int64           4.237e+04              2.297X
+                       doubles           2.867e+04              1.554X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2031                  1X
+                  int128_Boost                1700             0.8371X
+                     int96_CPP               624.2             0.3073X
+                         int64                2982              1.468X
+                        double                6999              3.446X
+
+-xCORE-AVX2
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+Add:                  Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           2.529e+04                  1X
+                  int128_Boost           1.114e+04             0.4403X
+                     int96_CPP                1614            0.06383X
+                         int64           4.357e+04              1.722X
+                 int128_Base1B           1.672e+04             0.6612X
+                       doubles           4.286e+04              1.695X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.853e+04                  1X
+                  int128_Boost           1.247e+04             0.6731X
+                     int96_CPP                1515            0.08177X
+                         int64           4.255e+04              2.296X
+                       doubles           2.887e+04              1.558X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2037                  1X
+                  int128_Boost                1707             0.8383X
+                     int96_CPP                 627             0.3079X
+                         int64                3004              1.475X
+                        double                7043              3.458X
+
+
+-O2
+Machine Info: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+Add:                  Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           2.455e+04                  1X
+                  int128_Boost           1.113e+04             0.4536X
+                     int96_CPP                1613            0.06571X
+                         int64           3.562e+04              1.451X
+                 int128_Base1B           1.785e+04             0.7272X
+                       doubles           2.672e+04              1.088X
+
+Multiply:             Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP           1.632e+04                  1X
+                  int128_Boost           1.392e+04             0.8532X
+                     int96_CPP                1504            0.09217X
+                         int64           4.243e+04              2.601X
+                       doubles           2.891e+04              1.772X
+
+Divide:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+                    int128_CPP                2036                  1X
+                  int128_Boost                1700             0.8348X
+                     int96_CPP                 627             0.3079X
+                         int64                2983              1.465X
+                        double                7043              3.459X
+
+
+

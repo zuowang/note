@@ -1,0 +1,54 @@
+How to run impala by CM?
+
+
+
+CM can be accesses by web, you need to use ssh to redirect on local machine by below command.
+
+$ssh -L 7180:192.168.150.104:7180 root@nodejump.sh.intel.com
+
+Then you can view CM in your local machine by http://localhost:7180
+
+User:admin
+
+Pwd:admin
+
+
+
+At the homepage of CM, select “Impala” on the left panel to configure Impala, on the right top corner, “Actions”  “Stop” || “Start” to stop or start Impala.
+
+Before you deploy impala, you need to stop impala on CM, after you deploy, start impala on CM again, then you can start test.
+
+
+set print pretty on
+set print object on
+set print static-members on
+set print vtbl on
+set print demangle on
+set demangle-style gnu-v3
+set print sevenbit-strings off
+handle SIGSEGV nostop noprint pass
+set height 0
+
+'ll bet that xmms2d is using sigwait() to handle signals, which breaks gdb's ability to catch CTRL-C. See https://bugzilla.kernel.org/show_bug.cgi?id=9039
+
+I got an idea for a workaround by reading Continue to debug after failed assertion on Linux? [C/C++] -- when I'm ready to break in gdb, I run "kill -TRAP <pid>" from another terminal window.
+
+
+  void IntersectBitVec(vector<int64_t>& bit_vec, vector<int64_t>& sub_bit_vec) {
+    int data_idx = 0,
+    int bit_idx = 63;
+    for (int i = 0; i < bit_vec.size(); ++i) {
+      for (int j = 63; j >=0; --j) {
+        if (bit_vec[i] & 0x01 << j) {
+          if (!(sub_bit_vec[data_idx] & 0x01 << bit_idx)) {
+            bit_vec[i] &= ~(0x01 << j);
+          }
+          if (--bit_idx < 0) {
+            --data_idx;
+            bit_idx = 63;
+          }
+        }
+      }
+    }
+  }
+

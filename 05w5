@@ -13,3 +13,9 @@ enable java debugger:
 export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,address=localhost:${JVM_DEBUG_PORT},server=y,suspend=${JVM_SUSPEND} ${JAVA_TOOL_OPTIONS}"
 
 http://preilly.me/2013/05/10/how-to-install-maven-on-centos/
+
+http://blog.nindalf.com/how-goroutines-work/
+
+about CPU Cache:
+http://m.blog.csdn.net/blog/cool_way/41855595
+

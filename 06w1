@@ -1,0 +1,30 @@
+sudo vi /etc/ssh/ssh_config
+    TCPKeepAlive yes
+
+goto a previous patch:
+git checkout 13f24500790752c7670cafe95d72faf25242ef73
+
+
+run impala-dev/complete
+$ docker run -i -t cloudera/impala-dev:complete /bin/bash
+[container]$ docker-boot   # starts Postgres and SSH both needed to run Impala
+[container]$ . bin/impala-config.sh   # sets the Impala environment variables
+[container]$ run-all.sh   # starts dependent services -- HDFS, Hive metastore, etc
+[container]$ start-impala-cluster.py
+[container]$ impala-shell.sh
+[localhost:21000] > select count(*) from tpch.lineitem;
+
+
+select count(p_brand) from tpch_parquet.part join tpch_parquet.lineitem where p_partkey = l_partkey;
+tpch_parquet.part 200000 MaterializeTupleTime(*): 472.556ms  BitmapGetTime(*): 11.814ms
+tpch_parquet.lineitem 6001215 MaterializeTupleTime(*): 1s215ms  BitmapGetTime(*): 71.660ms
+Total: 5s005ms
+
+
+$HIVE_HOME/bin/hive --debug
+jdb -attach 8000
+
+ tbl; = "Table(tableName:test2, dbName:mytest, owner:impala, createTime:0, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:key, type:int, comment:null), FieldSchema(name:value, type:string, comment:null)], location:null, inputFormat:null, outputFormat:null, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.hbase.HBaseSerDe, parameters:{hbase.columns.mapping=:key,cf1:val, storage_handler=org.apache.hadoop.hive.hbase.HBaseStorageHandler}), bucketCols:null, sortCols:null, parameters:null), partitionKeys:[], parameters:{storage_handler=org.apache.hadoop.hive.hbase.HBaseStorageHandler}, viewOriginalText:null, viewExpandedText:null, tableType:MANAGED_TABLE)"
+
+
+create table test2(key int, value string) WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,cf1:val", 'serialization.format'='1') STORED AS HBASEFILE;

@@ -1,0 +1,18 @@
+
+ How many times has the remote procedure call executed when it returns to the invoker? Ideally, we would want to maintain the semantics of local procedure call, which is guaranteed to have executed execute exactly once when it returns. However, these semantics are difficult to maintain in a distributed environment since messages may be lost and remote machines may crash. Different semantics have been proposed for number of remote invocations based on how much work the RPC system is willing to do:
+
+
+
+At-least-once: The call executes at least once as long as the server machine does not fail. These semantics require very little overhead and are easy to implement. The client machine continues to send call requests to the server machine until it gets an acknowledgement. If one or more acknowledgements are lost, the server may execute the call multiple times. This approach works only if the requested operation is idempotent, that is, multiple invocations of it return the same result. Servers that implement only idempotent operations must be stateless, that is, must not change global state in response to client requests. Thus, RPC systems that support these semantics rely on the design of stateless servers.
+
+
+
+At-most-once: The call executes at most once - either it does not execute at all or it executes exactly once depending on whether the server machine goes down. Unlike the previous semantics, these semantics require the detection of duplicate packets, but work for non-idempotent operations.
+
+
+
+Exactly once: The system guarantees the local semantics assuming that a server machine that crashes will eventually restart. It keeps track of orphan calls, that is, calls on server machines that have crashed, and allows them to be later adopted by a new server. These semantics and their implementation were proposed in Bruce Nelson's thesis, but because of the complexity of the implementation, were never implemented as far as I know. Nelson joined Xerox where he implemented the weaker at-most-once semantics in the Cedar environment.
+
+
+
+How should the caller be told of RPC failures in the case of at-least once or at-most-once semantics? We cannot return a special status in case of transparent RPC since local procedure calls do not return such values. One approach, used in Cedar, is to raise a host failure exception, which makes the client program network aware even though the call syntax is transparent. 

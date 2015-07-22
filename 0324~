@@ -1,0 +1,48 @@
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\([^:]\)isinf/\1std::isinf/g' `find ./be -name "*.h"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\([^:]\)isinf/\1std::isinf/g' `find ./be -name "*.cc"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\([^:]\)isnan/\1std::isnan/g' `find ./be -name "*.cc"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\([^:]\)isnan/\1std::isnan/g' `find ./be -name "*.h"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\([^:]\)shared_ptr/\1boost::shared_ptr/g' `find ./be -name "*.cc"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\([^:]\)shared_ptr/\1boost::shared_ptr/g' `find ./be -name "*.h"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/^shared_ptr/boost::shared_ptr/g' `find ./be -name "*.h"`impala@40dfc5751fde:~/Impala$ sed -i -e 's/^shared_ptr/boost::shared_ptr/g' `find ./be -name "*.cc"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\/boost::shared_ptr/\/shared_ptr/g' `find ./be -name "*.cc"`
+impala@40dfc5751fde:~/Impala$ sed -i -e 's/\/boost::shared_ptr/\/shared_ptr/g' `find ./be -name "*.h"`
+
+cd ~/Impala && CXX="/opt/intel/bin/icpc -std=c++0x -march=core-avx2 -gxx-name=/usr/bin/c++" ./buildall.sh -notests -noclean
+
+
+sse4.1 compile problem
+git revert a208b95  
+
+Sentry problem
+git revert c1f4351
+
+recompile impala with gcc with avx2
+SET(CXX_COMMON_FLAGS "-mavx2 -ftree-vectorize -ftree-vectorizer-verbose=1 -Wall -Wno-sign-compare -Wno-unknown-pragmas -pthread")
+
+
+
+impala@40dfc5751fde:~/Impala/be/src/runtime$ cd /home/impala/Impala/be/src/runtime && /usr/bin/c++   -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -DHAVE_NETDB_H -msse4.2 -Wall -Wno-sign-compare -Wno-unknown-pragmas -pthread -fno-strict-aliasing -Wno-deprecated -Wno-unused-local-typedefs -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG -g -ggdb -fverbose-asm -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -g -I/home/impala/Impala/be/src -I/usr/lib/jvm/java-7-oracle/include -I/usr/lib/jvm/java-7-oracle/include/linux -I/home/impala/Impala/thirdparty/hadoop-2.6.0-cdh5.5.0-SNAPSHOT/include -I/home/impala/Impala/thirdparty -I/home/impala/Impala/thirdparty/glog-0.3.2/src -I/home/impala/Impala/thirdparty/gflags-2.0/src -I/home/impala/Impala/thirdparty/gperftools-2.0/src -I/home/impala/Impala/thirdparty/gtest-1.6.0/include -I/usr/local/include -I/tmp/impala-build/cyrus-sasl-2.1.23/build/include -I/home/impala/Impala/thirdparty/openldap-2.4.25/impala_install/include -I/home/impala/Impala/thirdparty/thrift-0.9.0/build/include -I/home/impala/Impala/thirdparty/snappy-1.0.5/build/include -I/home/impala/Impala/thirdparty/lz4 -I/home/impala/Impala/thirdparty/re2 -I/home/impala/Impala/thirdparty/rapidjson/include -I/home/impala/Impala/thirdparty/boost_multiprecision -I/home/impala/Impala/thirdparty/avro-c-1.7.4/src -I/home/impala/Impala/be/generated-sources    -fPIC -o CMakeFiles/Runtime.dir/descriptors.cc.o -E /home/impala/Impala/be/src/runtime/descriptors.cc
+impala@40dfc5751fde:~/Impala/be/src/runtime$ mv CMakeFiles/Runtime.dir/descriptors.cc.o CMakeFiles/Runtime.dir/descriptors.cc
+impala@40dfc5751fde:~/Impala/be/src/runtime$ cd /home/impala/Impala/be/src/runtime && /usr/bin/c++   -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -DHAVE_NETDB_H -msse4.2 -Wall -Wno-sign-compare -Wno-unknown-pragmas -pthread -fno-strict-aliasing -Wno-deprecated -Wno-unused-local-typedefs -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG -g -ggdb -fverbose-asm -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -g -I/home/impala/Impala/be/src -I/usr/lib/jvm/java-7-oracle/include -I/usr/lib/jvm/java-7-oracle/include/linux -I/home/impala/Impala/thirdparty/hadoop-2.6.0-cdh5.5.0-SNAPSHOT/include -I/home/impala/Impala/thirdparty -I/home/impala/Impala/thirdparty/glog-0.3.2/src -I/home/impala/Impala/thirdparty/gflags-2.0/src -I/home/impala/Impala/thirdparty/gperftools-2.0/src -I/home/impala/Impala/thirdparty/gtest-1.6.0/include -I/usr/local/include -I/tmp/impala-build/cyrus-sasl-2.1.23/build/include -I/home/impala/Impala/thirdparty/openldap-2.4.25/impala_install/include -I/home/impala/Impala/thirdparty/thrift-0.9.0/build/include -I/home/impala/Impala/thirdparty/snappy-1.0.5/build/include -I/home/impala/Impala/thirdparty/lz4 -I/home/impala/Impala/thirdparty/re2 -I/home/impala/Impala/thirdparty/rapidjson/include -I/home/impala/Impala/thirdparty/boost_multiprecision -I/home/impala/Impala/thirdparty/avro-c-1.7.4/src -I/home/impala/Impala/be/generated-sources    -fPIC -o CMakeFiles/Runtime.dir/descriptors.cc.o -c CMakeFiles/Runtime.dir/descriptors.cc
+
+
+
+cd /home/impala/Impala/be/src/runtime && /opt/intel/bin/icpc  -std=c++0x -march=core-avx2 -gxx-name=/usr/bin/c++  -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -DHAVE_NETDB_H -msse4.2 -Wall -Wno-sign-compare -Wno-unknown-pragmas -pthread -fno-strict-aliasing -Wno-deprecated -Wno-unused-local-typedefs -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG -g -ggdb -fverbose-asm -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -g -I/home/impala/Impala/be/src -I/usr/lib/jvm/java-7-oracle/include -I/usr/lib/jvm/java-7-oracle/include/linux -I/home/impala/Impala/thirdparty/hadoop-2.6.0-cdh5.5.0-SNAPSHOT/include -I/home/impala/Impala/thirdparty -I/home/impala/Impala/thirdparty/glog-0.3.2/src -I/home/impala/Impala/thirdparty/gflags-2.0/src -I/home/impala/Impala/thirdparty/gperftools-2.0/src -I/home/impala/Impala/thirdparty/gtest-1.6.0/include -I/usr/local/include -I/tmp/impala-build/cyrus-sasl-2.1.23/build/include -I/home/impala/Impala/thirdparty/openldap-2.4.25/impala_install/include -I/home/impala/Impala/thirdparty/thrift-0.9.0/build/include -I/home/impala/Impala/thirdparty/snappy-1.0.5/build/include -I/home/impala/Impala/thirdparty/lz4 -I/home/impala/Impala/thirdparty/re2 -I/home/impala/Impala/thirdparty/rapidjson/include -I/home/impala/Impala/thirdparty/boost_multiprecision -I/home/impala/Impala/thirdparty/avro-c-1.7.4/src -I/home/impala/Impala/be/generated-sources    -fPIC -o CMakeFiles/Runtime.dir/descriptors.cc.o -c /home/impala/Impala/be/src/runtime/descriptors.cc
+cp CMakeFiles/Runtime.dir/descriptors.cc.o CMakeFiles/Runtime.dir/descriptors.cc
+
+cd /home/impala/Impala/be/src/runtime && /opt/intel/bin/icpc  -std=c++0x -march=core-avx2 -gxx-name=/usr/bin/c++  -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -DHAVE_NETDB_H -msse4.2 -Wall -Wno-sign-compare -Wno-unknown-pragmas -pthread -fno-strict-aliasing -Wno-deprecated -Wno-unused-local-typedefs -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG -g -ggdb -fverbose-asm -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -g -I/home/impala/Impala/be/src -I/usr/lib/jvm/java-7-oracle/include -I/usr/lib/jvm/java-7-oracle/include/linux -I/home/impala/Impala/thirdparty/hadoop-2.6.0-cdh5.5.0-SNAPSHOT/include -I/home/impala/Impala/thirdparty -I/home/impala/Impala/thirdparty/glog-0.3.2/src -I/home/impala/Impala/thirdparty/gflags-2.0/src -I/home/impala/Impala/thirdparty/gperftools-2.0/src -I/home/impala/Impala/thirdparty/gtest-1.6.0/include -I/usr/local/include -I/tmp/impala-build/cyrus-sasl-2.1.23/build/include -I/home/impala/Impala/thirdparty/openldap-2.4.25/impala_install/include -I/home/impala/Impala/thirdparty/thrift-0.9.0/build/include -I/home/impala/Impala/thirdparty/snappy-1.0.5/build/include -I/home/impala/Impala/thirdparty/lz4 -I/home/impala/Impala/thirdparty/re2 -I/home/impala/Impala/thirdparty/rapidjson/include -I/home/impala/Impala/thirdparty/boost_multiprecision -I/home/impala/Impala/thirdparty/avro-c-1.7.4/src -I/home/impala/Impala/be/generated-sources    -fPIC -o CMakeFiles/Runtime.dir/descriptors.cc.o -c CMakeFiles/Runtime.dir/descriptors.cc
+
+
+
+grep "xxx" . -r
+
+when there is some problem, exit and ssh -p 49153 impala@localhost
+
+b query-exec-state.cc:719
+
+
+
+
+
+

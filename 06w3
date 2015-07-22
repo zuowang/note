@@ -1,0 +1,50 @@
+http://www.cyberciti.biz/faq/ubuntu-add-user-to-group/
+
+Setting up SSH for Remote Collection
+
+Configure SSH to work in password-less mode so it does not prompt for the password on each invocation.
+
+For remote collection on the Linux host system, set up the password-less mode as follows:
+
+    Generate the key with an empty passphrase:
+
+    host> ssh-keygen
+
+    Copy the key to target system:
+
+    host> ssh-copy-id user@target
+
+    Alternatively, if you do not have ssh-copy-id on your host system, do the following:
+
+    host> cat ~/.ssh/id_rsa.pub | ssh user@target 'cat >> ~/.ssh/authorized_keys'
+
+    host> ssh user@target 'chmod 600 ~/.ssh/authorized_keys'
+
+
+Vtune:
+Remote Linux SSH
+Attach to process
+
+cd /opt/intel/vtune_amplifier_xe/sepdk/src
+./insmod-sep3 -q
+
+amplxe-gui&
+
+su to root
+amplxe-gui&
+local
+attach to process
+
+You can temporarily disable this restriction (and revert to the old behaviour allowing your user to ptrace (gdb) any of their other processes) by doing:
+
+echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+
+To permanently allow it edit /etc/sysctl.d/10-ptrace.conf and change the line:
+
+kernel.yama.ptrace_scope = 1
+
+To read
+
+kernel.yama.ptrace_scope = 0
+
+

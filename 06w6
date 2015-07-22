@@ -1,0 +1,12 @@
+kill impalad can't kill process running pin or pinbin
+
+is in an inconsistent state: cluster Id is incompatible with others.
+root@node7:~# rm -rf /mnt/disk2/dfs/dn/
+root@node7:~# rm -rf /mnt/disk3/dfs/dn/
+root@node7:~# rm -rf /mnt/disk4/dfs/dn/
+root@node7:~# rm -rf /mnt/disk5/dfs/dn/
+root@node7:~# rm -rf /mnt/disk6/dfs/dn/
+root@node7:~# rm -rf /mnt/disk7/dfs/dn/
+root@node7:~# rm -rf /mnt/disk8/dfs/dn/
+
+

@@ -1,0 +1,220 @@
++set(BOOST_ROOT "/home/impala/feilong/install.icc")
+
++set(BOOST_LIBRARYDIR "/home/impala/feilong/install.icc/lib")
+
++set(BOOST_INCLUDEDIR "/home/impala/feilong/install.icc/include")
+
++set(Boost_INCLUDE_DIR ${BOOST_INCLUDEDIR})
+
+
++set(BOOST_ROOT "/home/impala/feilong/install.icc")
+
++set(BOOST_INCLUDEDIR "/home/impala/feilong/install.icc/include")
+
++set(BOOST_LIBRARYDIR "/home/impala/feilong/install.icc/lib")
+
++set(Boost_INCLUDE_DIR /home/impala/feilong/install.icc/include)
+
++set(Boost_LIBRARY_DIR /home/impala/feilong/install.icc/lib)
+
++find_package(Boost COMPONENTS thread regex-mt system-mt filesystem-mt REQUIRED)
+
++include_directories(${Boost_INCLUDE_DIR})
+
++link_directories(${Boost_LIBRARY_DIR})
+
+
+toolset.flags $(toolset).compile USER_OPTIONS $(condition)/<link>static
+: -fPIC : unchecked ;
+
+toolset.flags $(toolset).compile.c++ USER_OPTIONS $(condition)/<link>static
+: -fPIC : unchecked ;
+
+
+./bjam -a cxxflags=-fPIC --prefix=/mnt/disk1/dev/boost_1_46_1/gen link=static toolset=gcc threading=multi install > build-static2.log
+
+[原]boost中静态库编译没有-fPIC选项的问题解决方案
+
+
+2012-8-17阅读1415 评论0
+
+
+
+序章：问题
+
+
+
+    使用libboostpython.so动态链接是没有问题的，但是使用libboostpython.a静态链接，会产生如下错误：
+
+
+
+/usr/bin/ld: libboost_python.a(from_python.o): relocation R_X86_64_32 against`.rodata.str1.8' can not be used when making a shared object; recompile with -fPIC libboost_python.a: could not read symbols: Bad value
+
+    原因在于boost的编译工具bjam在编译boost静态库时，没有使用-fPIC选项，使得编译出来的静态库没有重定位能力。
+
+
+
+这样在64位机器上，boost编译出来的静态库几乎全部不能使用。并且bjam工具不提供定制编译参数的功能。
+
+第一部分：解决思想
+
+
+
+    查看bjam工具的编译命令，将编译命令记录下来，批量修改成带-fPIC选项后，执行编译。
+
+
+
+    由于我们只需要libboostpython.a库，所以可以只编译python相关库。查看bjam --help后，使用命令如下：
+
+
+
+    ./bjam --with-python --build-dir="mystage" link=static -n > comtxt
+
+
+
+    --with-python表示只编译python库，--build-dir="mystage"表示编译的库放到mystage目录下，link=static表示只编译静态库，-n表示只显示命令并不执行。> comtxt表示输出重定向到comtxt文件。在boost目录下执行这个命令后，得到comtxt文件，这个文件就是带有编译命令和其它输出的所有内容了。然后将这个文件中命令之外的语句行批量删除，这些语句行带有明显特征，可以使用notepad 等带有正则式匹配的工具批量删除，也可以在vim下用dd手动删除，一共也不到200行。删除后，批量替换"g "为"g " -fPIC，关闭comtxt文件。执行命令
+
+
+
+     bash comtxt
+
+
+
+     这个命令就是用系统shell来解释命令行，最后，我们就在mystage的最深目录下得到了我们用-fPIC编译处理的静态库。
+
+
+
+第二部分：comtxt文件内容
+
+
+
+        mkdir -p "stage24"
+
+        mkdir -p "stage24/boost"
+
+        mkdir -p "stage24/boost/bin.v2"
+
+        mkdir -p "stage24/boost/bin.v2/libs"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/numeric.o" "libs/python/src/numeric.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/list.o" "libs/python/src/list.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/long.o" "libs/python/src/long.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/dict.o" "libs/python/src/dict.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/tuple.o" "libs/python/src/tuple.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/str.o" "libs/python/src/str.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/slice.o" "libs/python/src/slice.cpp"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter"
+
+    
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/from_python.o" "libs/python/src/converter/from_python.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/registry.o" "libs/python/src/converter/registry.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/type_id.o" "libs/python/src/converter/type_id.cpp"
+
+        mkdir -p "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object"
+
+    
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/enum.o" "libs/python/src/object/enum.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/class.o" "libs/python/src/object/class.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/function.o" "libs/python/src/object/function.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/inheritance.o" "libs/python/src/object/inheritance.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/life_support.o" "libs/python/src/object/life_support.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/pickle_support.o" "libs/python/src/object/pickle_support.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/errors.o" "libs/python/src/errors.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/module.o" "libs/python/src/module.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/builtin_converters.o" "libs/python/src/converter/builtin_converters.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/arg_to_python_base.o" "libs/python/src/converter/arg_to_python_base.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/iterator.o" "libs/python/src/object/iterator.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/stl_iterator.o" "libs/python/src/object/stl_iterator.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object_protocol.o" "libs/python/src/object_protocol.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object_operators.o" "libs/python/src/object_operators.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/wrapper.o" "libs/python/src/wrapper.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/import.o" "libs/python/src/import.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/exec.o" "libs/python/src/exec.cpp"
+
+    "g " -fPIC  -ftemplate-depth-128 -O3 -finline-functions -Wno-inline -Wall -pthread  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB -DNDEBUG  -I"." -I"/usr/ali/include/python2.5" -c -o "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/function_doc_signature.o" "libs/python/src/object/function_doc_signature.cpp"
+
+    rm -f "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/libboost_python.a" 
+
+    "/usr/bin/ar"  rc "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/libboost_python.a" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/numeric.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/list.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/long.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/dict.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/tuple.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/str.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/slice.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/from_python.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/registry.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/type_id.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/enum.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/class.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/function.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/inheritance.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/life_support.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/pickle_support.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/errors.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/module.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/builtin_converters.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/converter/arg_to_python_base.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/iterator.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/stl_iterator.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object_protocol.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object_operators.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/wrapper.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/import.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/exec.o" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/object/function_doc_signature.o"
+
+    "/usr/bin/ranlib" "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/libboost_python.a"
+
+    cp "stage24/boost/bin.v2/libs/python/build/gcc-4.1.2/release/link-static/threading-multi/libboost_python.a"  "stage/lib/libboost_python.a"
+
+第三部分：编译出来的文件
+
+
+
+     这个是使用boost1.48和python2.7.2编译出来静态库,可去我的资源里查找。
+
+
+
+    http://download.csdn.net/detail/ccchu/4508278
+
+
+
+第四部分：网上的其它方法（boost1.43）
+
+
+
+今天在网上看到了更容易的方法，在boost_inc下，
+
+编辑
+
+vim tools/build/v2/tools/gcc.jam
+
+在750行处，添加
+
+toolset.flags $(toolset).compile USER_OPTIONS $(condition)/<link>static
+
+: -fPIC : unchecked ;
+
+toolset.flags $(toolset).compile.c++ USER_OPTIONS $(condition)/<link>static
+
+: -fPIC : unchecked ;
+
+然后
+
+./bjam -a --with-python stage
+
+
+scp be/build/release/catalog/catalogd be/build/release/statestore/statestored be/build/release/service/impalad  be/build/release/service/libfesupport.so fe/target/impala-frontend-0.1-SNAPSHOT-jar-with-dependencies.jar  llvm-ir/impala-sse.ll  root@node7:/mnt/disk1/dev/release
