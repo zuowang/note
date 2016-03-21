@@ -1,0 +1,2 @@
+for (t = 0 ; t != threads ; ++t)
+		pthread_join(info[t].id, NULL);

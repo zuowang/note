@@ -1,9 +1,12 @@
 *Add the toolchain/test PPA*
 sudo su
-export https_proxy=https://child-prc.intel.com:913
+export https_proxy=https://child-prc.intel.com:913(it's required, since it's now in root, not ignore https://)
+export http_proxy=http://child-prc.intel.com:913
 add-apt-repository ppa:ubuntu-toolchain-r/test
 
 sudo apt-get update
+export https_proxy=child-prc.intel.com:913
+export http_proxy=child-prc.intel.com:913(remove http:// and https://)
 sudo apt-get install g++-4.8
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
  
@@ -13,3 +16,21 @@ sudo ln -s /usr/bin/g++-4.XXX /usr/bin/g++
  
 *Check version number*
 g++ --version 
+
+sudo apt-get install netcat-traditional netcat-openbsd
+
+add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python3.4
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.2 50
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.4 50
+
+http://www.redbook.io/
+http://redbook.cs.berkeley.edu/bib4.html
+
+centos7
+yum group list
+yum groupinstall "Development Tools"
+
+centos 6.5
+yum install gcc gcc-c++

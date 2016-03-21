@@ -48,3 +48,6 @@ To read
 kernel.yama.ptrace_scope = 0
 
 
+change the host, not docker container.
+
+sysctl -p /etc/sysctl.d/10-ptrace.conf

@@ -1,0 +1,119 @@
+DPDK Memcpy Optimization
+
+1. Introduction
+2. Terminology
+3. Mechanism
+    3.1 Architectural Insights
+    3.2 DPDK memcpy optimization
+    3.3 Code change
+4. Glibc memcpy analysis
+Acknowledgements
+Author's Address
+
+
+1. Introduction
+
+This document describes DPDK memcpy optimization, for both SSE and AVX platforms.
+
+Glibc memcpy is for general uses, it's not so efficient for DPDK where copies are small and from cache to cache mainly.
+Also, glibc is changing over versions, some tradeoffs it made have negative impact on DPDK performance. This in the meantime makes DPDK memcpy performance glibc version dependent.
+For this cause, it's necessary to maintain a standalone memcpy implementation to take full advantage of hardware features, and make special optimization aiming at DPDK scenarios.
+
+Current DPDK memcpy has the following improvement areas:
+* No support for 256-bit load/store
+* Poor performance for unaligned cases
+* Performance drops at certain odd copy sizes
+* Make slow glibc call for constant copies
+
+It can be improved significantly by utilizing 256-bit AVX instructions and applying more optimization techniques.
+
+2. Terminology
+
+Aligned copy: Same offset for source & destination starting addresses
+Unaligned copy: Different offsets for source & destination starting addresses
+Constant payload size: Copy length can be decided at compile time
+Variable payload size: Copy length can't be decided at compile time
+
+3. Mechanism
+
+3.1 Architectural Insights
+
+New architectures are likely to have better cache performance and stronger ISA implementation.
+Memcpy needs to make full utilization of cache bandwidth, and implement different mechanisms according to hardware features.
+Below is the architecture analysis for memory performance in Haswell and Sandy Bridge.
+
+Haswell has significant improvements in memory hierarchy over Sandy Bridge:
+* 2x cache bandwidth: From 48 B/cycle to 96 B/cycle
+* Sandy Bridge suffers from L1D bank conflicts, Haswell doesn't
+* Sandy Bridge has 2 split line buffers, Haswell has 4
+* Forwarding latency is 2 cycles for 256-bit AVX loads in Sandy Bridge, 1 in Haswell
+
+3.2 DPDK memcpy optimization
+
+DPDK memcpy calls are mainly cache to cache cases with payload no larger than 8KB, they can be categorized into 4 scenarios:
+* Aligned copy, with constant payload size
+* Aligned copy, with variable payload size
+* Unaligned copy, with constant payload size
+* Unaligned copy, with variable payload size
+
+Each scenario should be optimized according to its characteristics:
+* For aligned cases, no special optimization techniques are required
+* For unaligned cases:
+    * Make store address aligned is a basic technique to improve performance
+    * Load address alignment is a tradeoff between bit shifting overhead and unaligned memory access penalty, which should be assessed by test
+    * Load/store address should be made available as early as possible to fully utilize the pipeline
+* For constant cases, inlining can bring significant benefits by means of gcc optimization at compile time
+* For variable cases, it's important to reduce branches and make good use of hardware prefetch
+
+Memcpy optimization is summarized below:
+* Utilize full cache bandwidth
+    * SSE: 128 bit
+    * AVX/AVX2: 128/256 bit, depends on hardware implementation
+* Enforce aligned stores
+* Apply load address alignment based on architecture features
+    * Enforce aligned loads for Sandy Bridge like architectures
+    * No need to enforce aligned loads for Haswell because unaligned loads is improved, also the AVX2 VPALIGNR is not efficient for 256-bit shifting and leads to extra overhead
+* Make load/store address available as early as possible
+
+Finally, general optimization techniques should be applied, like inlining, branch reducing, prefetch pattern access, etc.
+
+3.3 Code change
+
+DPDK memcpy is implemented in a standalone file "rte_memcpy.h".
+The memcpy function is "rte_memcpy_func", which contains the copy flow, and calls the inline move functions for actual data copy.
+
+There will be major code change described as follows:
+* Differentiate architectural features based on CPU flags
+    * Implement separated copy flow specifically optimized for target architecture
+    * Implement separated move functions for SSE/AVX/AVX2 to make full utilization of cache bandwidth
+* Rewrite the memcpy function "rte_memcpy_func"
+    * Add store aligning
+    * Add load aligning for Sandy Bridge and older architectures
+    * Put block copy loop into inline move functions for better control of instruction order
+    * Eliminate unnecessary MOVs
+* Rewrite the inline move functions
+    * Add move functions for unaligned load cases for Sandy Bridge and older architectures
+    * Change instruction order in copy loops for better pipeline utilization
+    * Use intrinsics instead of assembly code
+* Remove slow glibc call for constant copies
+
+Current memcpy performance test is in "test_memcpy_perf.c", which will also be updated with unaligned test cases.
+
+4. Glibc memcpy analysis
+
+Glibc 2.16 (Fedora 20) and 2.20 (Currently the latest, released on Sep 07, 2014) are analyzed.
+
+Glibc 2.16 issues:
+* No support for 256-bit load/store
+* Significant slowdown for unaligned constant cases due to split loads and 4k aliasing
+
+Glibc 2.20 issue:
+* Removed load address alignment, which can lead to significant slowdown for unaligned cases in former architectures like Sandy Bridge
+
+Also, calls to glibc can't be optimized by gcc at compile time.
+
+Acknowledgements
+
+Valuable suggestions from: Liang Cunming, Zhu Heqing, Bruce Richardson, and Chen Wenjun.
+
+Author's Address

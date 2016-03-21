@@ -1,0 +1,30 @@
+compiling with 1.54.0 with gcc 4.8.1 fails with uintptr_t type not declared.
+cstdint.hpp 
+	// See https://svn.boost.org/trac/boost/ticket/3548 and http://sources.redhat.com/bugzilla/show_bug.cgi?id=10990 
+	// 
+        //#if defined(BOOST_HAS_STDINT_H) && (!defined(__GLIBC__) || defined(__GLIBC_HAVE_LONG_LONG)) 
+	#if defined(BOOST_HAS_STDINT_H)                                 \ 
+	  && (!defined(__GLIBC__)                                       \ 
+	      || defined(__GLIBC_HAVE_LONG_LONG)                        \ 
+	      || (defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ >= 17))))) 
+
+
+sudo apt-get install rubygems
+http://defunkt.io/gist/
+sudo gem install -V -p http://child-prc.intel.com:913 gist
+export http_proxy=http://child-prc.intel.com:913
+gist --login
+
+
+grep SetTuple be -nIr --exclude *test.cc
+
+apt-get install linux-tools-3.11.0-15-generic
+
+sudo perf record -e cycles -e instructions -e L1-icache-load-misses -ag
+
+gcc -dM -E - < /dev/null
+
+curl --upload-file ./rte-memcpy.h https://transfer.sh/rte-memcpy.h
+
+transfer() { if [ $# -eq 0 ]; then echo "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"; return 1; fi
+tmpfile=$( mktemp -t transferXXX ); if tty -s; then basefile=$(basename "$1" | sed -e 's/[^a-zA-Z0-9._-]/-/g'); curl --progress-bar --upload-file "$1" "https://transfer.sh/$basefile" >> $tmpfile; else curl --progress-bar --upload-file "-" "https://transfer.sh/$1" >> $tmpfile ; fi; cat $tmpfile; rm -f $tmpfile; }; alias transfer=transfer 

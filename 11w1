@@ -1,0 +1,162 @@
+[INFO] --- maven-cup-plugin:1.6.4:generate (cup) @ impala-frontend ---
+[INFO] CUP: Processing 1 cup files
+[INFO] CUP: Processing /home/impala/Impala/fe/src/main/cup/sql-parser.y
+Warning : Terminal "EMPTY_IDENT" was declared but never used
+Warning : Terminal "UNEXPECTED_CHAR" was declared but never used
+Warning : *** Shift/Reduce conflict found in state #741
+  between file_format_create_table_val ::= (*) 
+  and     file_format_create_table_val ::= (*) KW_STORED KW_AS file_format_val 
+  under symbol KW_STORED
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #672
+  between storage_handler_val ::= (*) 
+  and     location_val ::= (*) 
+  under symbols: {KW_CACHED, KW_TBLPROPERTIES, KW_UNCACHED}
+  Resolved in favor of the second production.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between storage_handler_val ::= (*) 
+  under symbol KW_CACHED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between storage_handler_val ::= (*) 
+  and     location_val ::= (*) KW_LOCATION STRING_LITERAL 
+  under symbol KW_LOCATION
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between storage_handler_val ::= (*) 
+  under symbol KW_TBLPROPERTIES
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between storage_handler_val ::= (*) 
+  under symbol KW_UNCACHED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between location_val ::= (*) 
+  under symbol KW_CACHED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between location_val ::= (*) 
+  and     location_val ::= (*) KW_LOCATION STRING_LITERAL 
+  under symbol KW_LOCATION
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #672
+  between location_val ::= (*) 
+  under symbol KW_TBLPROPERTIES
+  Resolved in favor of shifting.
+Warning : *** Shift/Reduce conflict found in state #672
+  between location_val ::= (*) 
+  under symbol KW_UNCACHED
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #670
+  between file_format_create_table_val ::= (*) 
+  and     file_format_create_table_val ::= (*) KW_STORED KW_AS file_format_val 
+  under symbol KW_STORED
+  Resolved in favor of shifting.
+
+Error : *** More conflicts encountered than expected -- parser generation aborted
+------- CUP v0.11a beta 20060608 Parser Generation Summary -------
+  1 error and 13 warnings
+  204 terminals, 177 non-terminals, and 503 productions declared, 
+  producing 1043 unique parse states.
+  2 terminals declared but not used.
+  0 non-terminals declared but not used.
+  0 productions never reduced.
+  11 conflicts detected (0 expected).
+  No code produced.
+---------------------------------------------------- (v0.11a beta 20060608)
+
+
+
+--- a/fe/src/main/cup/sql-parser.y
++++ b/fe/src/main/cup/sql-parser.y
+@@ -391,6 +391,7 @@ nonterminal Boolean external_val;
+ nonterminal Boolean purge_val;
+ nonterminal String opt_init_string_val;
+ nonterminal THdfsFileFormat file_format_val;
++nonterminal String storage_handler_val;
+ nonterminal THdfsFileFormat file_format_create_table_val;
+ nonterminal Boolean if_exists_val;
+ nonterminal Boolean if_not_exists_val;
+@@ -891,21 +892,22 @@ create_unpartitioned_tbl_stmt ::=
+   KW_CREATE external_val:external KW_TABLE if_not_exists_val:if_not_exists
+   table_name:table LPAREN column_def_list:col_defs RPAREN comment_val:comment
+   row_format_val:row_format serde_properties:serde_props
+-  file_format_create_table_val:file_format location_val:location cache_op_val:cache_op
+-  tbl_properties:tbl_props
++  file_format_create_table_val:file_format storage_handler_val:storage_handler
++  location_val:location cache_op_val:cache_op tbl_properties:tbl_props
+   {:
+     RESULT = new CreateTableStmt(table, col_defs, new ArrayList<ColumnDef>(), external,
+         comment, row_format, file_format, location, cache_op, if_not_exists, tbl_props,
+-        serde_props);
++        serde_props, storage_handler);
+   :}
+   | KW_CREATE external_val:external KW_TABLE if_not_exists_val:if_not_exists
+     table_name:table comment_val:comment row_format_val:row_format
+     serde_properties:serde_props file_format_create_table_val:file_format
+-    location_val:location cache_op_val:cache_op tbl_properties:tbl_props
++    storage_handler_val:storage_handler location_val:location 
++    cache_op_val:cache_op tbl_properties:tbl_props
+   {:
+     RESULT = new CreateTableStmt(table, new ArrayList<ColumnDef>(),
+         new ArrayList<ColumnDef>(), external, comment, row_format, file_format,
+-        location, cache_op, if_not_exists, tbl_props, serde_props);
++        location, cache_op, if_not_exists, tbl_props, serde_props, storage_handler);
+   :}
+   | KW_CREATE external_val:external KW_TABLE if_not_exists_val:if_not_exists
+     table_name:table LPAREN column_def_list:col_defs RPAREN
+@@ -928,23 +930,23 @@ create_partitioned_tbl_stmt ::=
+   table_name:table LPAREN column_def_list:col_defs RPAREN KW_PARTITIONED KW_BY
+   LPAREN column_def_list:partition_col_defs RPAREN comment_val:comment
+   row_format_val:row_format serde_properties:serde_props
+-  file_format_create_table_val:file_format location_val:location cache_op_val:cache_op
+-  tbl_properties:tbl_props
++  file_format_create_table_val:file_format storage_handler_val:storage_handler
++  location_val:location cache_op_val:cache_op tbl_properties:tbl_props
+   {:
+     RESULT = new CreateTableStmt(table, col_defs, partition_col_defs, external, comment,
+         row_format, file_format, location, cache_op, if_not_exists, tbl_props,
+-        serde_props);
++        serde_props, storage_handler);
+   :}
+   | KW_CREATE external_val:external KW_TABLE if_not_exists_val:if_not_exists
+     table_name:table KW_PARTITIONED KW_BY
+     LPAREN column_def_list:partition_col_defs RPAREN
+     comment_val:comment row_format_val:row_format serde_properties:serde_props
+-    file_format_create_table_val:file_format location_val:location cache_op_val:cache_op
+-    tbl_properties:tbl_props
++    file_format_create_table_val:file_format storage_handler_val:storage_handler
++    location_val:location cache_op_val:cache_op tbl_properties:tbl_props
+   {:
+     RESULT = new CreateTableStmt(table, new ArrayList<ColumnDef>(), partition_col_defs,
+         external, comment, row_format, file_format, location, cache_op, if_not_exists,
+-        tbl_props, serde_props);
++        tbl_props, serde_props, storage_handler);
+   :}
+   ;
+ 
+@@ -1065,6 +1067,13 @@ terminator_val ::=
+   {: RESULT = terminator; :}
+   ;
+ 
++storage_handler_val ::=
++  KW_STORED KW_BY STRING_LITERAL:storage_handler
++  {: RESULT = storage_handler; :}
++  | /* empty */
++  {: RESULT = null; :}
++  ;
++
+ file_format_create_table_val ::=
+   KW_STORED KW_AS file_format_val:file_format
+   {: RESULT = file_format; :}
+
+IMPALA-1786: support create hbase table

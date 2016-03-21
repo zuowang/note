@@ -1,0 +1,19 @@
+debug spark
+SPARK_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+./bin/spark-shell
+
+
+
+For me, the reason is that both myproject/src and myproject/src/main/scala are marked as Source. So intellij failed to build myproject/src/main/scala due to above errors. Unmark Source from myproject/src (in intellij, File->Project structure, select myproject Module, select src folder in Sources Tab, remove it from Source in the "Add Content Root" pane) solved the problem. Hope this helps.
+
+
+  #--driver-java-options -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 \
+exec "${SPARK_HOME}"/bin/spark-submit \
+  --master $EXAMPLE_MASTER \
+  --class $EXAMPLE_CLASS \
+  "$SPARK_EXAMPLES_JAR" \
+  "$@"
+
+make-distribution.sh --tgz -Phadoop-2.4 -Pyarn -DskipTests -Dhadoop.version=2.4.1 -Phive -Phive-thriftserver
+
+sbt "project examples" package

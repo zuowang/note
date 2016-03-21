@@ -1,0 +1,11 @@
+usr/include/boost/exception_ptr.hpp:43: error: looser throw specifier for 'virtual boost::exception_ptr::~exception_ptr()'
+
+old 	new 	 
+90 	90 	            {
+91 	91 	            }
+92 	92 	 
+  	93 	        ~exception_ptr() throw() { }
+  	94 	 
+93 	95 	        operator unspecified_bool_type() const
+94 	96 	            {
+95 	97 	            return _empty() ? 0 : &exception_ptr::bad_alloc_;

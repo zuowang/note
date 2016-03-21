@@ -1,0 +1,41 @@
+
+#0  0x00007f5cf8790425 in raise () from /lib/x86_64-linux-gnu/libc.so.6
+#1  0x00007f5cf8793b8b in abort () from /lib/x86_64-linux-gnu/libc.so.6
+#2  0x00007f5cf8104a55 in os::abort(bool) () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#3  0x00007f5cf8284f87 in VMError::report_and_die() () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#4  0x00007f5cf828550e in crash_handler(int, siginfo*, void*) () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#5  <signal handler called>
+#6  0x00007f5cf8124ce9 in ParallelScavengeHeap::block_start(void const*) const () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#7  0x00007f5cf80fc2b0 in os::print_location(outputStream*, long, bool) () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#8  0x00007f5cf81092fb in os::print_register_info(outputStream*, void*) () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#9  0x00007f5cf828357c in VMError::report(outputStream*) () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#10 0x00007f5cf8284b8a in VMError::report_and_die() () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#11 0x00007f5cf810996f in JVM_handle_linux_signal () from /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/amd64/server/libjvm.so
+#12 <signal handler called>
+#13 0x00007f5cf2437215 in ?? ()
+#14 0x00007f5c0a194630 in ?? ()
+#15 0x00007f5cf21dedcc in ?? ()
+#16 0x00000000856b4e48 in ?? ()
+#17 0x00007f5c0a1945f8 in ?? ()
+#18 0x00000000800e8810 in ?? ()
+#19 0x00007f5c0a194648 in ?? ()
+#20 0x00000000800e94a0 in ?? ()
+#21 0x0000000000000000 in ?? ()
+HeapWord* ParallelScavengeHeap::block_start(const void* addr) const {
+if (young_gen()->is_in_reserved(addr)) {
+assert(young_gen()->is_in(addr),
+"addr should be in allocated part of young gen");
+// called from os::print_location by find or VMError
+if (Debugging || VMError::fatal_error_in_progress()) return NULL;
+Unimplemented();
+} else if (old_gen()->is_in_reserved(addr)) {
+assert(old_gen()->is_in(addr),
+"addr should be in allocated part of old gen");
+return old_gen()->start_array()->object_start((HeapWord*)addr);
+} else if (perm_gen()->is_in_reserved(addr)) {
+assert(perm_gen()->is_in(addr),
+"addr should be in allocated part of perm gen");
+return perm_gen()->start_array()->object_start((HeapWord*)addr);
+}
+return 0;
+}

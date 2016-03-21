@@ -1,3 +1,15 @@
 < PYTHONPATH='/home/impala/Impala:/home/impala/Impala/shell/gen-py:/home/impala/Impala/testdata/:/home/impala/Impala/thirdparty/thrift-0.9.0/build//python/lib64/python*/site-packages/:/home/impala/Impala/thirdparty/thrift-0.9.0/build//python/lib/python2.7/site-packages/:/home/impala/Impala/thirdparty/hive-1.1.0-cdh5.5.0-SNAPSHOT//lib/py:/home/impala/Impala/shell/ext-py/*/dist/*.egg'
 ---
 > PYTHONPATH='/home/impala/Impala:/home/impala/Impala/shell/gen-py:/home/impala/Impala/testdata/:/home/impala/Impala/thirdparty/thrift-0.9.0/build//python/lib64/python*/site-packages/:/home/impala/Impala/thirdparty/thrift-0.9.0/build//python/lib/python2.7/site-packages/:/home/impala/Impala/thirdparty/hive-1.1.0-cdh5.5.0-SNAPSHOT//lib/py:/home/impala/Impala/shell/ext-py/prettytable-0.7.1/dist/prettytable-0.7.1-py2.7.egg:/home/impala/Impala/shell/ext-py/sasl-0.1.1/dist/sasl-0.1.1-py2.7-linux-x86_64.egg:/home/impala/Impala/shell/ext-py/sqlparse-0.1.14/dist/sqlparse-0.1.14-py2.7.egg'
+
+
+
+lstopo
+lstopo-no-graphics
+
+plot "random_stride0.txt", "random_stride1.txt", "random_stride3.txt", "random_stride7.txt", "random_stride15.txt", "random_stride31.txt", "incremental_stride0.txt", "incremental_stride1.txt", "incremental_stride3.txt", "incremental_stride7.txt", "incremental_stride15.txt", "incremental_stride31.txt", "decremental_stride0.txt", "decremental_stride1.txt", "decremental_stride3.txt", "decremental_stride7.txt", "decremental_stride15.txt", "decremental_stride31.txt"
+
+
+plot "incremental_stride0.txt", "incremental_stride1.txt", "incremental_stride3.txt", "incremental_stride7.txt", "incremental_stride15.txt", "incremental_stride31.txt", "decremental_stride0.txt", "decremental_stride1.txt", "decremental_stride3.txt", "decremental_stride7.txt", "decremental_stride15.txt", "decremental_stride31.txt"
+
+http://www.cpu-world.com/Compare/375/Intel_Core_i5_i5-4460_vs_Intel_Core_i5_i5-660.html

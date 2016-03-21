@@ -51,11 +51,17 @@ flags intel-linux.compile OPTIONS <optimization>speed : "-O3 -std=c++0x -ip" ; #
 
 
 
+1.57.0
+cd tools/build/
+./bootstrap.sh
+./b2 install --prefix=/home/impala/boost_1_57_0/boost_build
+export PATH=/home/impala/boost_1_57_0/boost_install/bin:$PATH
+cd ../../
+b2 -a cxxflags=-fPIC --build-dir=/home/impala/boost_1_57_0/boost_build --prefix=/home/impala/boost_1_57_0/boost_install address-model=64 threading=multi link=static toolset=gcc install
+ln -S 
 
 
-
-
-
+build seastar
 
 
 

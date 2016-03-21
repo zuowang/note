@@ -1,0 +1,74 @@
+Machine Info: Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+Memcpy:               Function     Rate (iters/ms)          Comparison
+----------------------------------------------------------------------
+               "Glibc 7 Bytes"           2.069e+05                  1X
+             "Builtin 7 Bytes"           2.242e+05              1.084X
+                 "RTE 7 Bytes"           2.068e+05             0.9997X
+
+              "Glibc 15 Bytes"           2.069e+05                  1X
+            "Builtin 15 Bytes"           2.241e+05              1.083X
+                "RTE 15 Bytes"           2.243e+05              1.084X
+
+              "Glibc 31 Bytes"           1.921e+05                  1X
+            "Builtin 31 Bytes"           2.069e+05              1.077X
+                "RTE 31 Bytes"            2.07e+05              1.077X
+
+              "Glibc 63 Bytes"           1.921e+05                  1X
+            "Builtin 63 Bytes"           2.069e+05              1.077X
+                "RTE 63 Bytes"           1.922e+05                  1X
+
+             "Glibc 127 Bytes"           1.682e+05                  1X
+           "Builtin 127 Bytes"           1.793e+05              1.066X
+               "RTE 127 Bytes"           1.275e+05             0.7579X
+
+             "Glibc 255 Bytes"           1.003e+05                  1X
+           "Builtin 255 Bytes"           1.006e+05              1.003X
+               "RTE 255 Bytes"           9.175e+04             0.9148X
+
+             "Glibc 383 Bytes"           7.599e+04                  1X
+           "Builtin 383 Bytes"           7.596e+04             0.9997X
+               "RTE 383 Bytes"           6.659e+04             0.8763X
+
+             "Glibc 511 Bytes"           5.987e+04                  1X
+           "Builtin 511 Bytes"            5.99e+04              1.001X
+               "RTE 511 Bytes"           6.164e+04               1.03X
+
+             "Glibc 767 Bytes"           4.528e+04                  1X
+           "Builtin 767 Bytes"            4.53e+04              1.001X
+               "RTE 767 Bytes"           4.495e+04             0.9927X
+
+            "Glibc 1023 Bytes"           3.542e+04                  1X
+          "Builtin 1023 Bytes"           3.544e+04                  1X
+              "RTE 1023 Bytes"           3.233e+04             0.9127X
+
+            "Glibc 1535 Bytes"           2.505e+04                  1X
+          "Builtin 1535 Bytes"           2.506e+04                  1X
+              "RTE 1535 Bytes"           2.476e+04             0.9884X
+
+            "Glibc 2047 Bytes"            1.93e+04                  1X
+          "Builtin 2047 Bytes"           1.931e+04              1.001X
+              "RTE 2047 Bytes"           1.863e+04             0.9651X
+
+            "Glibc 3071 Bytes"           1.323e+04                  1X
+          "Builtin 3071 Bytes"           1.323e+04             0.9998X
+              "RTE 3071 Bytes"           1.303e+04             0.9852X
+
+            "Glibc 4095 Bytes"           1.003e+04                  1X
+          "Builtin 4095 Bytes"           1.004e+04                  1X
+              "RTE 4095 Bytes"                9750             0.9716X
+
+            "Glibc 6143 Bytes"                6589                  1X
+          "Builtin 6143 Bytes"                6594              1.001X
+              "RTE 6143 Bytes"                6610              1.003X
+
+            "Glibc 8191 Bytes"                5016                  1X
+          "Builtin 8191 Bytes"                5026              1.002X
+              "RTE 8191 Bytes"                5010             0.9988X
+
+           "Glibc 12287 Bytes"                3393                  1X
+         "Builtin 12287 Bytes"                3396              1.001X
+             "RTE 12287 Bytes"                3351             0.9875X
+
+           "Glibc 16383 Bytes"                2567                  1X
+         "Builtin 16383 Bytes"                2564             0.9988X
+             "RTE 16383 Bytes"                2517             0.9805X
