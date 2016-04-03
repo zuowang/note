@@ -1,0 +1,1 @@
+curl -sSL https://get.daocloud.io/daomonit/install.sh | sh -s 28da6219546f902b6be4e9ddbe8607964c43b3a2 
