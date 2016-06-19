@@ -287,4 +287,15 @@ vagrant up
 #http://kvz.io/blog/2013/01/16/vagrant-tip-keep-virtualbox-guest-additions-in-sync/
 download and install virtualbox4.3.36
 
+hdfs dfs -rm /udf/libaes-deencrypt0.2.so
+16/05/27 11:54:04 INFO fs.TrashPolicyDefault: Moved: 'hdfs://CDM1D07-209022141.wdds.com:8020/udf/libaes-deencrypt0.2.so' to trash at: hdfs://CDM1D07-209022141.wdds.com:8020/user/zhaoxudong5/.Trash/Current/udf/libaes-deencrypt0.2.so1464321244557
+[zhaoxudong5@CDM1D07-209022148 ~]$ hdfs dfs -put impala-dev/Impala/be/build/debug/udf_samples/libaes-deencrypt.so /udf/libaes-deencrypt0.2.so   
+[zhaoxudong5@CDM1D07-209022148 ~]$ impala-shell -l -u idc_wangzuo3 --auth_creds_ok_in_clear
+Starting Impala Shell using LDAP-based authentication
 
+sbt编译入门
+https://segmentfault.com/a/1190000002484978
+
+create table if not exists Fill(tradeId_ varchar(36) not null PRIMARY KEY, assetId_ varchar(7), price_ varchar(3), size_ varchar(3), orderId_ varchar(36), createdAt_ varchar(16), liquidity_ varchar(3), fee_ varchar(3), settled_ varchar(5), side_ varchar(4))
+
+phoenix-4.8.0-HBase-1.2-SNAPSHOT-thin-client
