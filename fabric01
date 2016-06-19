@@ -1,0 +1,290 @@
+StringVal AES_Decrypt(FunctionContext* context, const StringVal& arg1,
+    const StringVal& arg2) {
+  if (arg1.is_null || arg2.is_null || arg2.len > CryptoPP::AES::DEFAULT_KEYLENGTH) {
+    return StringVal::null();
+  }
+
+  byte key[CryptoPP::AES::DEFAULT_KEYLENGTH];
+  byte iv[CryptoPP::AES::BLOCKSIZE];
+  memset(key, 0x00, CryptoPP::AES::DEFAULT_KEYLENGTH);
+  memset(iv, 0x00, CryptoPP::AES::BLOCKSIZE);
+  for (int i = 0; i < arg2.len; ++i) key[i] = arg2.ptr[i];
+
+  CryptoPP::AES::Decryption aesDecryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
+  CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
+  std::string result_str;
+  CryptoPP::StreamTransformationFilter stfDecryptor(
+      cbcDecryption, new CryptoPP::StringSink(result_str));
+  stfDecryptor.Put(arg1.ptr, arg1.len);
+  stfDecryptor.MessageEnd();
+  return StringVal::CopyFrom(context,
+      reinterpret_cast<const uint8_t*>(result_str.c_str()), result_str.size());
+}
+
+StringVal AES_Encrypt(FunctionContext* context, const StringVal& arg1,
+    const StringVal& arg2) {
+  if (arg1.is_null || arg2.is_null || arg2.len > CryptoPP::AES::DEFAULT_KEYLENGTH) {
+    return StringVal::null();
+  }
+
+  byte key[CryptoPP::AES::DEFAULT_KEYLENGTH];
+  byte iv[CryptoPP::AES::BLOCKSIZE];
+  memset(key, 0x00, CryptoPP::AES::DEFAULT_KEYLENGTH);
+  memset(iv, 0x00, CryptoPP::AES::BLOCKSIZE);
+  for (int i = 0; i < arg2.len; ++i) key[i] = arg2.ptr[i];
+
+  CryptoPP::AES::Encryption aesEncryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
+  CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
+  std::string result_str;
+  CryptoPP::StreamTransformationFilter stfEncryptor(
+      cbcEncryption, new CryptoPP::StringSink(result_str));
+  stfEncryptor.Put(arg1.ptr, arg1.len);
+  stfEncryptor.MessageEnd();
+  return StringVal::CopyFrom(context,
+      reinterpret_cast<const uint8_t*>(result_str.c_str()), result_str.size());
+}
+
+
+impala-shell -l -u idc_wangzuo3 --auth_creds_ok_in_clear
+
+drop function  udf.aes_decrypt2(STRING,STRING);
+
+sh-4.2$ sudo docker cp b001bb9f86db:/home/dev/Impala/be/build/latest/udf_samples/libaes-deencrypt.so .
+sh-4.2$ hdfs dfs -put libaes-deencrypt.so /udf/libaes-deencrypt0.2.so                                 
+sh-4.2$ impala-shell -l -u idc_wangzuo3 --auth_creds_ok_in_clear  
+
+
+npm start 启动开发服务器
+redux generate page user-managemant -system=aas
+
+Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/log4j/Level
+Intellij Idea : add external jar 解决问题
+
+
+maven编译出现的中文注释问题
+错误
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+正确			
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+			
+maven 处理scala和java 混合编译
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.2</version>
+                <executions>
+                    <execution>
+                        <id>compile-scala</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>test-compile-scala</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <phase>test-compile</phase>
+                    </execution>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+jetty:run 添加external jar
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.0.4.v20130625</version>
+                <configuration>
+                    <webAppConfig>
+                        <extraClasspath>${basedir}/target/classes/;${basedir}/lib/phoenix-4.8.0-HBase-1.2-SNAPSHOT-thin-client.jar</extraClasspath>
+                    </webAppConfig>
+                </configuration>
+            </plugin>
+			
+			
+add external jar to classpath only in intellij idea
+
+
+oracle-license-v1-1 license could not be presented
+try 'dpkg-reconfigure debconf' to select a frontend other than noninteractive
+
+dpkg: error processing archive /var/cache/apt/archives/oracle-java8-installer_8u92+8u91arm-1~webupd8~0_all.deb (--unpack):
+ subprocess new pre-installation script returned error exit status 2
+Errors were encountered while processing:
+ /var/cache/apt/archives/oracle-java8-installer_8u92+8u91arm-1~webupd8~0_all.deb
+E: Sub-process /usr/bin/dpkg returned an error code (1)			
+			
+			
+【重要更正】经核验，在下发的知识点中，有一处需要更正：
+上篇 总部 《安全管理》部分第12个知识点：
+原文是：数据中心应急处理体系包括数据中心应急预案、数据中心应急演练机制、数据中心应急演练物资库房、建立健全巡检制度、数据中心安全制度
+应更改为：数据中心应急处理体系包括数据中心应急预案、数据中心应急演练机制、数据中心应急演练物资库房、建立健全巡检制度
+
+即：数据中心应急处理体系不包括数据中心安全制度，只有4个选项。
+
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch hyperledger-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp1 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch hyperledger-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp2 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch hyperledger-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp3 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch hyperledger-peer peer node start
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode deploy -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02 -c '{"Function":"init", "Args": ["a","100", "b", "200"]}'
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode invoke -n 1edd7021ab71b766f4928a9ef91182c018dffb86fef7a4b5a5516ac590a87957e21a62d939df817f5105f524abddcddfc7b1a60d780f02d8235bd7af9db81b66 -c '{"Function":"invoke", "Args": ["a","b","10"]}'
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode query -l golang -n 1edd7021ab71b766f4928a9ef91182c018dffb86fef7a4b5a5516ac590a87957e21a62d939df817f5105f524abddcddfc7b1a60d780f02d8235bd7af9db81b66 -c '{"Function": "query", "Args": ["a"]}'
+
+git fetch origin
+git rebase origin/master
+make clean peer gotools
+cd $GOPATH/src/github.com/hyperledger/fabric/core/container
+go test -run BuildImage_Peer
+
+
+fabric-api 
+mvn test -Dtest=PerfTest
+mvn dependency::tree
+
+
+turnoff debug output of netty
+    <logger name="io.grpc.netty.NettyServerHandler" level="ERROR" additivity="false" />
+    <logger name="io.grpc.netty.NettyClientHandler" level="ERROR" additivity="false" />
+	
+	
+http://vlkan.com/blog/post/2015/11/27/maven-protobuf/
+
+
+download sbt-launcher.jar
+http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.2/sbt-launch.jar
+change typesafe.artifactoryonline.com to repo.typesafe.com
+
+
+sed -i 's/kernel.yama.ptrace_scope = 1/kernel.yama.ptrace_scope = 0/' /etc/sysctl.d/10-ptrace.conf
+
+# Because this is a system control daemon, we need to restart the relevant service
+sysctl -p /etc/sysctl.d/10-ptrace.conf
+
+
+#kill all running containers and LOGFILES...This may need to be revisited.
+
+docker kill $(docker ps -q) 1>/dev/null 2>&1
+docker ps -aq -f status=exited | xargs docker rm 1>/dev/null 2>&1
+
+docker ps -a | grep "Exited" | awk '{print $1 }'|xargs docker stop
+docker ps -a | grep "Exited" | awk '{print $1 }'|xargs docker rm
+docker images|grep none|awk '{print $3 }'|xargs docker rmi
+docker images|grep dev-vp|awk '{print $3 }'|xargs docker rmi
+
+Go的代码调优一例
+http://studygolang.com/articles/2640
+
+How do you quickly find the implementation(s) of an interface in Golang?
+^func (.*) StoreState\(
+http://www.kaleidos.net/blog/295/stateless-authentication-with-api-rest/
+
+docker run --rm -it -e CORE_VM_ENDPOINT=htt//172.17.0.1:2375 -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch -e CORE_LOGGING_LEVEL=CRITICAL -e CORE_PEER_PROFILE_ENABLED=true -p 30303:30303 -p 31315:31315 hyperledger/fabric-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp1 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch -e CORE_LOGGING_LEVEL=CRITICAL hyperledger/fabric-peer peer node start
+
+for((i=1;i<10000;i++)); do CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode invoke -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function":"invoke", "Args": ["a","b","1"]}'; done
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode query -l golang -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function": "query", "Args": ["a"]}'
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode invoke -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function":"invoke", "Args": ["a","b","1"]}'
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer chaincode deploy -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02 -c '{"Function":"init", "Args": ["a","1000000000000", "b", "0"]}'
+
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_SECURITY_ENABLED=true -e CORE_SECURITY_PRIVACY=true -e CORE_PEER_PKI_ECA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TCA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TLSCA_PADDR=172.17.0.1:50051 -e CORE_SECURITY_ENROLLID=test_vp0 -e CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch -e CORE_LOGGING_LEVEL=CRITICAL -e CORE_PEER_PROFILE_ENABLED=true -p 30303:30303 -p 31315:31315 hyperledger/fabric-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp1 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_SECURITY_ENABLED=true -e CORE_SECURITY_PRIVACY=true -e CORE_PEER_PKI_ECA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TCA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TLSCA_PADDR=172.17.0.1:50051 -e CORE_SECURITY_ENROLLID=test_vp1 -e CORE_SECURITY_ENROLLSECRET=5wgHK9qqYaPy -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch -e CORE_LOGGING_LEVEL=CRITICAL hyperledger/fabric-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp2 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_SECURITY_ENABLED=true -e CORE_SECURITY_PRIVACY=true -e CORE_PEER_PKI_ECA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TCA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TLSCA_PADDR=172.17.0.1:50051 -e CORE_SECURITY_ENROLLID=test_vp2 -e CORE_SECURITY_ENROLLSECRET=vQelbRvja7cJ -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch -e CORE_LOGGING_LEVEL=CRITICAL hyperledger/fabric-peer peer node start
+
+docker run --rm -it -e CORE_VM_ENDPOINT=http://172.17.0.1:2375 -e CORE_PEER_ID=vp3 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303 -e CORE_SECURITY_ENABLED=true -e CORE_SECURITY_PRIVACY=true -e CORE_PEER_PKI_ECA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TCA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TLSCA_PADDR=172.17.0.1:50051 -e CORE_SECURITY_ENROLLID=test_vp3 -e CORE_SECURITY_ENROLLSECRET=9LKqKH5peurL -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft -e CORE_PBFT_GENERAL_MODE=batch -e CORE_LOGGING_LEVEL=CRITICAL hyperledger/fabric-peer peer node start
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 ./peer network login jim -p 6avZQLwcUe9b
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true build/bin/peer chaincode deploy -u jim -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02 -c '{"Function":"init", "Args": ["a","1000000000000", "b", "0"]}'
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true build/bin/peer chaincode query -u jim -l golang -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function": "query", "Args": ["a"]}'
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true build/bin/peer chaincode invoke -u jim -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function":"invoke", "Args": ["a","b","1"]}'
+
+go tool pprof http://172.17.0.2:6060/debug/pprof/profile
+
+docker cp src/github.com/derekparker 5e98fbde06a7:/opt/gopath/src/github.com
+go get github.com/derekparker/delve/cmd/dlv
+
+make peer
+CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true build/bin/peer node start --peer-chaincodedev
+make membersrvc 
+build/bin/membersrvc
+
+CORE_PEER_ADDRESS=172.17.0.2:30303 CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true build/bin/peer chaincode query -u jim -l golang -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function": "query", "Args": ["a"]}'
+ 
+ 
+for((i=1;i<1000;i++)); do CORE_PEER_ADDRESS=172.17.0.2:30303 CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true build/bin/peer chaincode invoke -u jim -n 3ad1fc0c484709031dc75e9f0fe432a1b4940f6cdabd2484c4dfe457666d58dc93e968d4eb444fff39bf6e47b0baa1d6b4948010d46276af4485e9ea035e3299 -c '{"Function":"invoke", "Args": ["a","b","1"]}'; done
+
+go tool pprof http://172.17.0.2:6060/debug/pprof/profile
+
+
+start jetty fail 
+export PATH=/path/to/jdk:$PATH
+
+另一种启动jetty方法
+> cd $JETTY_HOME
+> java -jar start.jar
+
+配置文件位置webapp/conf/*.xml
+修改maven配置文件
+<groupId>org.eclipse.jetty</groupId>
+<artifactId>jetty-maven-plugin</artifactId>
+<version>9.3.8.v20160314</version>
+
+ 
+ubuntu install perf
+apt-get install linux-tools-common
+apt-get install linux-tools-3.13.0-86-generic
+sysctl kernel.perf_event_paranoid=-1
+
+download https://atlas.hashicorp.com/hyperledger/fabric-baseimage to virtualbox.box
+vagrant add box hyperledger/fabric-baseimage /path/to/virtualbox.box
+cd $GOPATH/src/github.com/hyperledger/fabric/devenv
+vi Vagrantfile and comment out  "config.vm.box_version =..."
+vagrant up
+#How to update VirtualBox Guest Additions with vagrant :
+#http://kvz.io/blog/2013/01/16/vagrant-tip-keep-virtualbox-guest-additions-in-sync/
+download and install virtualbox4.3.36
+
+
