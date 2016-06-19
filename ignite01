@@ -1,0 +1,19 @@
+
+### ignite readthrough writethrough ###
+
+cache
+swap storage
+persistent storage
+ CacheStore#load(Transaction, Object) This method is transactional and will enlist the entry into ongoing transaction if there is one.
+
+/**
+ * Loads data from persistent store.
+ *
+ * @param tx Cache transaction.
+ * @param keys Cache keys.
+ * @param vis Closure.
+ * @return {@code True} if there is a persistent storage.
+ * @throws IgniteCheckedException If data loading failed.
+ */
+public boolean loadAll(@Nullable IgniteInternalTx tx, Collection<? extends KeyCacheObject> keys,
+    IgniteBiInClosure<KeyCacheObject, Object> vis) throws IgniteCheckedException;
