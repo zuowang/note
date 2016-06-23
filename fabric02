@@ -1,0 +1,14 @@
+ docker cp src/github.com/derekparker 6bc2a3e5ac2a:/opt/gopath/src/github.com
+ docker exec -it 6bc2a3e5ac2a bash
+ go get github.com/derekparker/delve/cmd/dlv
+ b github.com/looplab/fsm/fsm.go:242
+ condition 6 event != "DISC_PEERS" && event != "DISC_GET_PEERS"
+ 
+
+1. send DISC_GET_PEERS periodically
+core/peer/handler.go:289
+tickChan := time.NewTicker(discPeriod).C
+reply with DISC_PEERS
+core/peer/handler.go:204
+
+2. message during a invoke call:
